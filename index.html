@@ -184,7 +184,7 @@
 
       <div class="q-actions">
         <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">← Önceki Soru</button>
-        <button class="btn btn-danger" id="clearBtn" onclick="clearAnswer()">Boş Bırak / Temizle</button>
+        <button class="btn btn-danger" id="clearBtn" onclick="clearAnswer()" style="display:none">Boş Bırak / Temizle</button>
         <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Sonraki Soru →</button>
       </div>
     </div>
@@ -364,8 +364,13 @@ function loadQuestion(index) {
   const selectedOpt = userAnswers[q.id];
   const qStatusEl = document.getElementById("qStatus");
   if (selectedOpt) {
-    qStatusEl.innerText = `İşaretlenen: ${selectedOpt}`;
-    qStatusEl.style.color = "var(--primary)";
+    if (selectedOpt === q.answer) {
+      qStatusEl.innerText = "✓ Doğru!";
+      qStatusEl.style.color = "var(--success)";
+    } else {
+      qStatusEl.innerText = `✗ Yanlış! Doğru cevap: ${q.answer}`;
+      qStatusEl.style.color = "var(--danger)";
+    }
   } else {
     qStatusEl.innerText = "Cevaplanmadı (Boş)";
     qStatusEl.style.color = "var(--text-muted)";
@@ -380,13 +385,15 @@ function loadQuestion(index) {
 
     if (selectedOpt === key) item.classList.add("selected");
 
-    if (isReviewMode) {
+    // Şık işaretlendiği anda doğru/yanlış göster
+    if (selectedOpt) {
       if (key === q.answer) item.classList.add("correct");
-      else if (selectedOpt === key && key !== q.answer) item.classList.add("incorrect");
+      else if (selectedOpt === key) item.classList.add("incorrect");
+      item.style.cursor = "default";
     }
 
     item.onclick = () => {
-      if (isReviewMode) return;
+      if (isReviewMode || userAnswers[q.id]) return; // cevap kilitli
       selectOption(q.id, key);
     };
 
@@ -448,12 +455,8 @@ function updatePaletteStatus() {
     if (!btn) return;
     btn.className = "palette-btn";
     if (idx === currentQuestionIndex) btn.classList.add("active");
-    if (isReviewMode) {
-      if (userAnswers[q.id] === q.answer) btn.classList.add("correct");
-      else if (userAnswers[q.id]) btn.classList.add("incorrect");
-    } else {
-      if (userAnswers[q.id]) btn.classList.add("answered");
-    }
+    if (userAnswers[q.id] === q.answer) btn.classList.add("correct");
+    else if (userAnswers[q.id]) btn.classList.add("incorrect");
   });
 }
 
@@ -521,7 +524,7 @@ function startNextAttempt() {
   isReviewMode = false;
   
   updateAttemptBadges();
-  document.getElementById("clearBtn").style.display = "inline-flex";
+  document.getElementById("clearBtn").style.display = "none";
   document.getElementById("resultsScreen").style.display = "none";
   document.getElementById("examScreen").style.display = "grid";
   document.getElementById("finishBtnHeader").style.display = "inline-flex";
