@@ -18,229 +18,293 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://fatiherolbahar.github.io/sistem_analizi_tasar-m-/og-image.png">
-  <meta name="theme-color" content="#4f46e5">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#4338ca">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --bg-body: #f8fafc;
-      --bg-card: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-      --radius: 16px;
+      --accent: #4338ca;
+      --accent-soft: #eceefb;
+      --bg: #f4f4f2;
+      --surface: #ffffff;
+      --text: #1d2433;
+      --muted: #667085;
+      --line: #e3e3de;
+      --ok: #16794c;
+      --ok-soft: #e6f4ec;
+      --bad: #b42318;
+      --bad-soft: #fceceb;
+      --warn: #b54708;
+      --warn-soft: #fdf1e3;
+      --radius: 10px;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; }
-    .container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 20px; }
-
-    /* Header */
-    header { background: var(--bg-card); border: 1px solid var(--border); padding: 18px 24px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); flex-wrap: wrap; gap: 12px; }
-    header h1 { font-size: 1.2rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-    .attempt-badge { background: #4f46e5; color: #fff; padding: 4px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; }
-    .header-btns { display: flex; gap: 10px; }
-
-    /* Layout */
-    .exam-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
-    @media (max-width: 900px) { .exam-layout { grid-template-columns: 1fr; } }
-
-    /* Question Card */
-    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
-    .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-    .q-number { font-size: 0.95rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; }
-    .q-status { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
-    .q-text { font-size: 1.125rem; line-height: 1.6; font-weight: 600; color: var(--text-main); margin-bottom: 24px; }
-
-    /* Options */
-    .options-list { display: flex; flex-direction: column; gap: 12px; }
-    .option-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; background: #fff; }
-    .option-item:hover { border-color: var(--primary); background: #f8faff; transform: translateY(-1px); }
-    .option-item.selected { border-color: var(--primary); background: #eef2ff; }
-    .opt-key { width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; transition: all 0.2s ease; }
-    .option-item.selected .opt-key { background: var(--primary); color: #fff; }
-    .opt-text { font-size: 0.975rem; line-height: 1.5; color: #334155; padding-top: 4px; }
-
-    /* Review Colors */
-    .option-item.correct { border-color: var(--success) !important; background: #ecfdf5 !important; }
-    .option-item.correct .opt-key { background: var(--success) !important; color: #fff !important; }
-    .option-item.incorrect { border-color: var(--danger) !important; background: #fef2f2 !important; }
-    .option-item.incorrect .opt-key { background: var(--danger) !important; color: #fff !important; }
-
-    /* Actions */
-    .q-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: none; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-secondary { background: #f1f5f9; color: #334155; }
-    .btn-secondary:hover { background: #e2e8f0; }
-    .btn-danger { background: #fee2e2; color: var(--danger); }
-    .btn-danger:hover { background: #fecaca; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { background: #059669; }
-
-    /* Sidebar Palette */
-    .sidebar-card { position: sticky; top: 20px; }
-    .palette-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
-    .palette-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
-    .palette-btn { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border); background: #f8fafc; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: 0.15s; }
-    .palette-btn:hover { border-color: var(--primary); }
-    .palette-btn.active { border-color: var(--primary); outline: 2px solid var(--primary); font-weight: 700; }
-    .palette-btn.answered { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .palette-btn.correct { background: var(--success); color: #fff; border-color: var(--success); }
-    .palette-btn.incorrect { background: var(--danger); color: #fff; border-color: var(--danger); }
-
-    /* Results Screen */
-    .results-screen { display: none; }
-    .score-banner { text-align: center; padding: 36px 20px; background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%); border-radius: 14px; margin-bottom: 24px; }
-    .attempt-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; }
-    .score-percentage { font-size: 3.5rem; font-weight: 800; color: var(--text-main); }
-    .score-label { font-size: 1.05rem; color: var(--text-muted); font-weight: 500; margin-top: 6px; }
-    .score-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 24px; }
-    .metric-box { background: #f8fafc; border: 1px solid var(--border); padding: 16px; border-radius: 12px; text-align: center; }
-    .metric-box .num { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
-    .metric-box.c .num { color: var(--success); }
-    .metric-box.w .num { color: var(--danger); }
-    .metric-box.b .num { color: var(--warning); }
-    .metric-box.t .num { color: var(--primary); }
-    .metric-box .label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-
-    /* Modal / History */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 999; padding: 16px; }
-    .modal-box { background: #fff; border-radius: var(--radius); width: 100%; max-width: 650px; max-height: 85vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-    .modal-header h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
-    .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
-
-    .history-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    .history-table th, .history-table td { padding: 12px 10px; font-size: 0.875rem; text-align: center; border-bottom: 1px solid var(--border); }
-    .history-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; }
-    .badge-percent { padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; }
-    /* Mobil Uyumluluk */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    [hidden] { display: none !important; }
     html { -webkit-text-size-adjust: 100%; }
-    button, .option-item, .palette-btn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-    .history-wrap { overflow-x: auto; }
-
-    @media (max-width: 900px) {
-      .sidebar-card { position: static; }
-      .palette-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); max-height: 260px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh;
     }
+    button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
+    /* Üst çubuk */
+    .topbar { position: sticky; top: 0; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+    .topbar-in { max-width: 1040px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .brand img { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; }
+    .brand-title { font-size: 0.98rem; font-weight: 700; line-height: 1.2; }
+    .brand-sub { font-size: 0.78rem; color: var(--muted); }
+    .top-actions { display: flex; gap: 8px; }
+
+    .btn { border: 1px solid var(--line); background: var(--surface); padding: 9px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #f1f1ee; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #3730a3; }
+    .btn-danger { color: var(--bad); }
+    .btn-danger:hover { background: var(--bad-soft); }
+
+    main { max-width: 1040px; margin: 0 auto; padding: 18px 16px 96px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+
+    /* Sınav */
+    .exam-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+    .progress { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+    .progress > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width .25s; }
+    .q-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 0.85rem; color: var(--muted); }
+    .q-meta b { color: var(--text); }
+    .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.6; margin-bottom: 18px; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .opt:not(:disabled):hover { border-color: var(--accent); background: var(--accent-soft); }
+    .opt-key { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+    .opt-text { font-size: 0.95rem; padding-top: 2px; }
+    .opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+    .opt.correct .opt-key { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+    .opt.wrong .opt-key { background: var(--bad); border-color: var(--bad); color: #fff; }
+    .opt:disabled { cursor: default; color: inherit; }
+    .feedback { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 0.92rem; font-weight: 600; }
+    .feedback.ok { background: var(--ok-soft); color: var(--ok); }
+    .feedback.bad { background: var(--bad-soft); color: var(--bad); }
+    .nav-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+    /* Soru listesi */
+    .side-title { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.92rem; margin-bottom: 12px; }
+    .side-count { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+    .palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; max-height: 360px; overflow-y: auto; }
+    .pbtn { aspect-ratio: 1; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .pbtn.ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .pbtn.bad { background: var(--bad); border-color: var(--bad); color: #fff; }
+    .pbtn.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .legend { display: flex; gap: 12px; margin-top: 12px; font-size: 0.75rem; color: var(--muted); }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+    /* Mobil alt çubuk */
+    .bottombar { display: none; }
+    .sheet-backdrop { display: none; }
+
+    /* Sonuç */
+    .score-box { text-align: center; padding: 26px 12px 22px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+    .score-kicker { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .score-num { font-size: 3.2rem; font-weight: 800; line-height: 1.15; margin: 4px 0; }
+    .score-msg { color: var(--muted); font-size: 0.95rem; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .stat { border: 1px solid var(--line); border-radius: 8px; padding: 12px 6px; text-align: center; }
+    .stat b { display: block; font-size: 1.4rem; line-height: 1.2; }
+    .stat span { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    .stat.ok b { color: var(--ok); } .stat.bad b { color: var(--bad); } .stat.warn b { color: var(--warn); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* Geçmiş */
+    .page-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .page-head h2 { font-size: 1.15rem; }
+    .chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 6px 0 0; overflow-x: auto; }
+    .chart-col { flex: 0 0 auto; min-width: 34px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 4px; }
+    .chart-bar { width: 22px; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 3px; }
+    .chart-col small { font-size: 0.7rem; color: var(--muted); }
+    .chart-col em { font-size: 0.7rem; font-style: normal; font-weight: 700; }
+    .hist-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .hist-item { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+    .hist-item:hover { border-color: var(--accent); }
+    .hist-pct { flex-shrink: 0; width: 62px; text-align: center; font-size: 1.15rem; font-weight: 800; }
+    .hist-main { flex: 1; min-width: 0; }
+    .hist-main b { display: block; font-size: 0.98rem; }
+    .hist-main span { font-size: 0.78rem; color: var(--muted); }
+    .hist-counts { font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+    .c-ok { color: var(--ok); } .c-bad { color: var(--bad); } .c-warn { color: var(--warn); }
+    .chev { color: var(--muted); font-size: 1.2rem; }
+    .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+
+    /* Deneme detayı */
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
+    .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 13px; font-size: 0.83rem; font-weight: 600; }
+    .chip.on { background: var(--text); border-color: var(--text); color: #fff; }
+    .qlist { display: flex; flex-direction: column; gap: 10px; }
+    details.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+    details.qcard > summary { list-style: none; cursor: pointer; padding: 13px 14px; display: flex; gap: 10px; align-items: flex-start; }
+    details.qcard > summary::-webkit-details-marker { display: none; }
+    .qno { flex-shrink: 0; min-width: 34px; height: 24px; padding: 0 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; }
+    .qno.ok { background: var(--ok); } .qno.bad { background: var(--bad); } .qno.blank { background: var(--warn); }
+    .qsum { flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    details[open] .qsum { display: block; }
+    .qbody { padding: 0 14px 14px; }
+    .qbody .options { gap: 8px; margin-top: 4px; }
+    .opt.static { cursor: default; }
+    .tag { margin-left: auto; padding-left: 8px; flex-shrink: 0; font-size: 0.72rem; font-weight: 700; }
+    .opt.correct .tag { color: var(--ok); } .opt.wrong .tag { color: var(--bad); }
+    .note { padding: 11px 14px; background: var(--warn-soft); color: var(--warn); border-radius: 8px; font-size: 0.88rem; margin-top: 14px; }
+
+    /* Tablet / mobil */
+    @media (max-width: 860px) {
+      .exam-grid { grid-template-columns: 1fr; }
+      #palettePanel {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; border-radius: 16px 16px 0 0;
+        transform: translateY(105%); transition: transform .25s; max-height: 72vh; overflow-y: auto; padding-bottom: 24px;
+      }
+      #palettePanel.open { transform: none; }
+      .palette { grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); max-height: none; }
+      .sheet-backdrop.open { display: block; position: fixed; inset: 0; background: rgba(15,20,35,.45); z-index: 30; }
+      .bottombar {
+        display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface);
+        border-top: 1px solid var(--line); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); gap: 8px;
+      }
+      .bottombar .btn { flex: 1; padding: 13px 8px; }
+      .bottombar .btn-mid { flex: 0 0 auto; padding: 13px 14px; }
+      .nav-row { display: none; }
+    }
     @media (max-width: 600px) {
-      body { padding: 12px 10px; }
-      .container { gap: 14px; }
-      header { padding: 14px; }
-      header h1 { font-size: 1rem; flex-wrap: wrap; }
-      .header-btns { width: 100%; }
-      .header-btns .btn { flex: 1; padding: 10px 8px; font-size: 0.82rem; }
-      .card { padding: 16px; }
-      .q-text { font-size: 1rem; margin-bottom: 18px; }
-      .option-item { padding: 12px; gap: 10px; }
-      .opt-key { width: 30px; height: 30px; }
-      .opt-text { font-size: 0.93rem; }
-      .q-actions { flex-direction: column-reverse; align-items: stretch; margin-top: 20px; }
-      .q-actions .btn { width: 100%; padding: 13px 18px; }
-      .score-banner { padding: 24px 12px; }
-      .score-percentage { font-size: 2.8rem; }
-      .score-metrics { grid-template-columns: repeat(2, 1fr); }
-      #resultsScreen .card > div:last-child { flex-direction: column; }
-      #resultsScreen .card > div:last-child .btn { width: 100%; }
-      .modal-box { padding: 16px; max-height: 90vh; }
-      .history-table th, .history-table td { padding: 8px 4px; font-size: 0.78rem; }
+      main { padding: 12px 10px 100px; }
+      .panel { padding: 16px; }
+      .topbar-in { padding: 8px 10px; }
+      .brand-sub { display: none; }
+      .top-actions .btn { padding: 8px 11px; font-size: 0.82rem; }
+      .q-text { font-size: 1rem; }
+      .opt { padding: 12px 11px; gap: 10px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .score-num { font-size: 2.7rem; }
+      .btn-row .btn { flex: 1 1 100%; padding: 13px; }
+      .hist-item { padding: 12px; gap: 10px; }
+      .hist-pct { width: 52px; font-size: 1.05rem; }
+      .hist-counts { display: none; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Header -->
-  <header>
-    <div>
-      <h1><img src="logo.svg" alt="Logo" style="width:32px;height:32px;border-radius:8px;"> Sistem Analizi ve Tasarımı <span id="currentAttemptHeaderBadge" class="attempt-badge">1. Deneme</span></h1>
-      <span style="font-size: 0.85rem; color: var(--text-muted);">84 Soruluk Çalışma Soruları Test Simülatörü</span>
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <img src="logo.svg" alt="Logo">
+      <div>
+        <div class="brand-title">Sistem Analizi ve Tasarımı</div>
+        <div class="brand-sub" id="brandSub">Sınav simülatörü · 84 soru</div>
+      </div>
     </div>
-    <div class="header-btns">
-      <button class="btn btn-secondary" onclick="openHistoryModal()">📊 Gelişim Geçmişim</button>
-      <button id="finishBtnHeader" class="btn btn-success" onclick="finishExam()">✓ Sınavı Bitir</button>
+    <div class="top-actions">
+      <button class="btn" id="btnHistory" onclick="openHistory()">Geçmiş</button>
+      <button class="btn btn-primary" id="btnFinish" onclick="finishExam()">Bitir</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- Exam Screen -->
-  <div id="examScreen" class="exam-layout">
-    <div class="card">
+<main>
+  <!-- Sınav -->
+  <section id="examScreen" class="exam-grid">
+    <div class="panel">
+      <div class="progress"><span id="progressBar"></span></div>
       <div class="q-meta">
-        <span class="q-number" id="qNumber">Soru 1 / 84</span>
-        <span class="q-status" id="qStatus">Cevaplanmadı</span>
+        <span id="qNumber"></span>
+        <span id="qAnswered"></span>
       </div>
-      <div class="q-text" id="qText">Yükleniyor...</div>
-      <div class="options-list" id="optionsList"></div>
-
-      <div class="q-actions">
-        <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">← Önceki Soru</button>
-        <button class="btn btn-danger" id="clearBtn" onclick="clearAnswer()" style="display:none">Boş Bırak / Temizle</button>
-        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Sonraki Soru →</button>
-      </div>
-    </div>
-
-    <!-- Sidebar Palette -->
-    <div class="card sidebar-card">
-      <div class="palette-title">
-        <span>Soru Listesi (84)</span>
-        <span id="answeredCount" style="font-size: 0.85rem; background:#eef2ff; color:var(--primary); padding:3px 8px; border-radius:6px; font-weight:700;">0/84</span>
-      </div>
-      <div class="palette-grid" id="paletteGrid"></div>
-    </div>
-  </div>
-
-  <!-- Results Screen -->
-  <div id="resultsScreen" class="results-screen">
-    <div class="card">
-      <div class="score-banner">
-        <div class="attempt-title" id="resAttemptTitle">1. Deneme Tamamlandı!</div>
-        <div class="score-percentage" id="resPercentage">%0</div>
-        <div class="score-label" id="resFeedback">Tebrikler!</div>
-      </div>
-
-      <div class="score-metrics">
-        <div class="metric-box t"><div class="num">84</div><div class="label">Toplam Soru</div></div>
-        <div class="metric-box c"><div class="num" id="resCorrect">0</div><div class="label">Doğru</div></div>
-        <div class="metric-box w"><div class="num" id="resWrong">0</div><div class="label">Yanlış</div></div>
-        <div class="metric-box b"><div class="num" id="resBlank">0</div><div class="label">Boş</div></div>
-      </div>
-
-      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn btn-success" id="nextAttemptBtn" onclick="startNextAttempt()" style="font-size: 1rem; padding: 12px 24px;">🔄 2. Denemeye Başla</button>
-        <button class="btn btn-primary" onclick="reviewExam()">🔍 Cevapları İncele</button>
-        <button class="btn btn-secondary" onclick="openHistoryModal()">📊 Deneme Geçmişini Gör</button>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="optionsList"></div>
+      <div class="feedback" id="feedback" hidden></div>
+      <div class="nav-row">
+        <button class="btn" id="prevBtn" onclick="prevQuestion()">Önceki</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Sonraki</button>
       </div>
     </div>
-  </div>
+
+    <aside class="panel" id="palettePanel">
+      <div class="side-title"><span>Sorular</span><span class="side-count" id="answeredCount"></span></div>
+      <div class="palette" id="paletteGrid"></div>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i>Doğru</span>
+        <span><i style="background:var(--bad)"></i>Yanlış</span>
+        <span><i style="background:#fff;border:1px solid var(--line)"></i>Boş</span>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Sonuç -->
+  <section id="resultsScreen" hidden>
+    <div class="panel">
+      <div class="score-box">
+        <div class="score-kicker" id="resTitle"></div>
+        <div class="score-num" id="resPercent"></div>
+        <div class="score-msg" id="resMsg"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>84</b><span>Toplam</span></div>
+        <div class="stat ok"><b id="resCorrect">0</b><span>Doğru</span></div>
+        <div class="stat bad"><b id="resWrong">0</b><span>Yanlış</span></div>
+        <div class="stat warn"><b id="resBlank">0</b><span>Boş</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openDetail(lastSavedIndex)">Soruları incele</button>
+        <button class="btn" onclick="startNewAttempt()" id="newAttemptBtn">Yeni deneme</button>
+        <button class="btn" onclick="openHistory()">Geçmiş</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Geçmiş -->
+  <section id="historyScreen" hidden>
+    <div class="page-head">
+      <h2>Gelişim geçmişi</h2>
+      <div class="btn-row">
+        <button class="btn" onclick="backToExam()">Sınava dön</button>
+        <button class="btn btn-danger" onclick="clearHistory()" id="clearAllBtn">Tümünü sil</button>
+      </div>
+    </div>
+    <div class="panel" id="chartPanel">
+      <div class="side-title"><span>Başarı grafiği</span><span class="side-count">Deneme başına doğru yüzdesi</span></div>
+      <div class="chart" id="chart"></div>
+    </div>
+    <div class="hist-list" id="historyList"></div>
+  </section>
+
+  <!-- Deneme detayı -->
+  <section id="detailScreen" hidden>
+    <div class="page-head">
+      <button class="btn" onclick="openHistory()">← Geçmiş</button>
+      <button class="btn btn-danger" onclick="deleteAttempt()" id="deleteAttemptBtn">Bu denemeyi sil</button>
+    </div>
+    <div class="panel">
+      <div class="score-kicker" id="dTitle"></div>
+      <div class="score-num" id="dPercent" style="font-size:2.4rem"></div>
+      <div class="score-msg" id="dDate"></div>
+      <div class="stats" style="margin:16px 0 0">
+        <div class="stat"><b id="dTotal">84</b><span>Toplam</span></div>
+        <div class="stat ok"><b id="dCorrect"></b><span>Doğru</span></div>
+        <div class="stat bad"><b id="dWrong"></b><span>Yanlış</span></div>
+        <div class="stat warn"><b id="dBlank"></b><span>Boş</span></div>
+      </div>
+      <div id="dNote" class="note" hidden>Bu deneme eski sürümde kaydedildiği için soru bazlı detay yok. Yeni denemelerde detaylar saklanır.</div>
+    </div>
+    <div id="dQuestions" hidden>
+      <div class="chips" id="chips"></div>
+      <div class="qlist" id="qlist"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Mobil alt çubuk -->
+<div class="bottombar" id="bottomBar">
+  <button class="btn" id="mPrev" onclick="prevQuestion()">Önceki</button>
+  <button class="btn btn-mid" onclick="togglePalette()" id="mList">Sorular</button>
+  <button class="btn btn-primary" id="mNext" onclick="nextQuestion()">Sonraki</button>
 </div>
-
-<!-- History Modal -->
-<div class="modal-backdrop" id="historyModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h2>🏆 Deneme ve Gelişim Geçmişi</h2>
-      <button class="close-btn" onclick="closeHistoryModal()">&times;</button>
-    </div>
-    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
-      1. denemeden son denemeye kadar kaydettiğin tüm başarı puanların buradadır. Gelişimini buradan adım adım izleyebilirsin.
-    </p>
-    <div id="historyContent"></div>
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-      <button class="btn btn-danger" onclick="clearHistory()">Tüm Geçmişi Sıfırla</button>
-      <button class="btn btn-secondary" onclick="closeHistoryModal()">Kapat</button>
-    </div>
-  </div>
-</div>
+<div class="sheet-backdrop" id="backdrop" onclick="togglePalette(false)"></div>
 
 <script>
 // 84 Soru ve Cevap Veri Seti (Eksiksiz)
@@ -331,310 +395,359 @@ const questionsData = [
   { id: 84, text: "Bir kurumun müşteri şikâyet sisteminde teknik altyapı sorunsuzdur, fakat kullanıcılar yeni sürece ilişkin eğitim almamış ve farklı kayıt kuralları kullanmaktadır. Hangi adım öncelikle doğru olur?", options: { A: "İş kurallarını düzenlemeden yeni ekranlar eklemek", B: "Mevcut veri farklılıklarını önemsemeyip yalnızca donanım artırmak", C: "Sistemin doğruluğunu yalnızca sunucu hızına bakarak yeterli saymak", D: "Personelin tüm işlemleri tekrar kâğıda almasını kalıcı hedef belirlemek", E: "Kullanıcı, süreç ve ortak veri kurallarını netleştirip eğitim ile uygulamayı uyumlu hâle getirmek" }, answer: "E" }
 ];
 
-let currentQuestionIndex = 0;
-let userAnswers = {};
-let isReviewMode = false;
+const KEY_HISTORY = "examHistory";
+const KEY_PROGRESS = "examProgress";
+const TOTAL = questionsData.length;
+const $ = (id) => document.getElementById(id);
 
-// Deneme Numarasını Al
-function getAttemptCount() {
-  const history = JSON.parse(localStorage.getItem("examHistory") || "[]");
-  return history.length;
+let cur = 0;
+let answers = {};
+let viewIndex = null;       // detay ekranında açık olan deneme
+let lastSavedIndex = null;  // en son bitirilen deneme
+let detailFilter = "all";
+let screen = "exam";
+
+/* ---------- Depolama ---------- */
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(KEY_HISTORY) || "[]"); } catch (e) { return []; }
 }
-
-function updateAttemptBadges() {
-  const nextAttemptNum = getAttemptCount() + 1;
-  document.getElementById("currentAttemptHeaderBadge").innerText = `${nextAttemptNum}. Deneme`;
-}
-
-// Devam eden sınavı kaydet / geri yükle (sayfa yenilense de kaldığın yerden devam)
-function saveProgress() {
-  if (isReviewMode) return;
-  localStorage.setItem("examProgress", JSON.stringify({ index: currentQuestionIndex, answers: userAnswers }));
-}
-
-function restoreProgress() {
+function setHistory(h) { localStorage.setItem(KEY_HISTORY, JSON.stringify(h)); }
+function saveProgress() { localStorage.setItem(KEY_PROGRESS, JSON.stringify({ answers, cur })); }
+function loadProgress() {
   try {
-    const saved = JSON.parse(localStorage.getItem("examProgress") || "null");
-    if (!saved) return 0;
-    userAnswers = saved.answers || {};
-    const idx = Number(saved.index);
-    return idx >= 0 && idx < questionsData.length ? idx : 0;
-  } catch (e) {
-    return 0;
-  }
+    const p = JSON.parse(localStorage.getItem(KEY_PROGRESS) || "null");
+    if (p && p.answers) { answers = p.answers; cur = Math.min(p.cur || 0, TOTAL - 1); }
+  } catch (e) {}
 }
 
-// Sayfa Yüklendiğinde
-window.addEventListener("DOMContentLoaded", () => {
-  const startIndex = restoreProgress();
-  updateAttemptBadges();
-  renderPalette();
-  updateAnsweredCount();
-  loadQuestion(startIndex);
-});
+/* ---------- Ekran yönetimi ---------- */
+function showScreen(name) {
+  screen = name;
+  ["exam", "results", "history", "detail"].forEach((s) => { $(s + "Screen").hidden = (s !== name); });
+  $("btnFinish").hidden = (name !== "exam");
+  $("btnHistory").hidden = (name === "history" || name === "detail");
+  $("bottomBar").style.display = (name === "exam") ? "" : "none";
+  togglePalette(false);
+  window.scrollTo(0, 0);
+}
 
-// Soru Yükleme
-function loadQuestion(index) {
-  currentQuestionIndex = index;
-  saveProgress();
-  const q = questionsData[index];
+function togglePalette(force) {
+  const open = (force === undefined) ? !$("palettePanel").classList.contains("open") : force;
+  $("palettePanel").classList.toggle("open", open);
+  $("backdrop").classList.toggle("open", open);
+}
 
-  document.getElementById("qNumber").innerText = `Soru ${q.id} / ${questionsData.length}`;
-  document.getElementById("qText").innerText = `${q.id}. ${q.text}`;
+function updateBrand() {
+  $("brandSub").innerText = `${getHistory().length + 1}. deneme · ${TOTAL} soru`;
+}
 
-  const selectedOpt = userAnswers[q.id];
-  const qStatusEl = document.getElementById("qStatus");
-  if (selectedOpt) {
-    if (selectedOpt === q.answer) {
-      qStatusEl.innerText = "✓ Doğru!";
-      qStatusEl.style.color = "var(--success)";
-    } else {
-      qStatusEl.innerText = `✗ Yanlış! Doğru cevap: ${q.answer}`;
-      qStatusEl.style.color = "var(--danger)";
-    }
-  } else {
-    qStatusEl.innerText = "Cevaplanmadı (Boş)";
-    qStatusEl.style.color = "var(--text-muted)";
-  }
+/* ---------- Sınav ekranı ---------- */
+function renderQuestion() {
+  const q = questionsData[cur];
+  const chosen = answers[q.id];
 
-  const optionsList = document.getElementById("optionsList");
-  optionsList.innerHTML = "";
+  $("qNumber").innerHTML = `Soru <b>${cur + 1}</b> / ${TOTAL}`;
+  $("qAnswered").innerText = `${Object.keys(answers).length} cevaplandı`;
+  $("progressBar").style.width = `${((cur + 1) / TOTAL) * 100}%`;
+  $("qText").innerText = q.text;
 
+  const list = $("optionsList");
+  list.innerHTML = "";
   for (const [key, val] of Object.entries(q.options)) {
-    const item = document.createElement("div");
-    item.className = "option-item";
-
-    if (selectedOpt === key) item.classList.add("selected");
-
-    // Şık işaretlendiği anda doğru/yanlış göster
-    if (selectedOpt) {
-      if (key === q.answer) item.classList.add("correct");
-      else if (selectedOpt === key) item.classList.add("incorrect");
-      item.style.cursor = "default";
+    const b = document.createElement("button");
+    b.className = "opt";
+    if (chosen) {
+      b.disabled = true;
+      if (key === q.answer) b.classList.add("correct");
+      else if (key === chosen) b.classList.add("wrong");
     }
-
-    item.onclick = () => {
-      if (isReviewMode || userAnswers[q.id]) return; // cevap kilitli
-      selectOption(q.id, key);
-    };
-
-    item.innerHTML = `
-      <div class="opt-key">${key}</div>
-      <div class="opt-text"><b>${key})</b>${val}</div>
-    `;
-    optionsList.appendChild(item);
+    const k = document.createElement("span");
+    k.className = "opt-key";
+    k.innerText = key;
+    const t = document.createElement("span");
+    t.className = "opt-text";
+    t.innerText = val;
+    b.append(k, t);
+    b.onclick = () => selectOption(q.id, key);
+    list.appendChild(b);
   }
 
-  document.getElementById("prevBtn").disabled = (index === 0);
-  document.getElementById("nextBtn").innerText = (index === questionsData.length - 1) ? "Tamamla" : "Sonraki Soru →";
+  const fb = $("feedback");
+  if (chosen) {
+    fb.hidden = false;
+    if (chosen === q.answer) { fb.className = "feedback ok"; fb.innerText = "Doğru cevap."; }
+    else { fb.className = "feedback bad"; fb.innerText = `Yanlış. Doğru cevap: ${q.answer}`; }
+  } else {
+    fb.hidden = true;
+  }
 
-  updatePaletteStatus();
+  const last = (cur === TOTAL - 1);
+  ["prevBtn", "mPrev"].forEach((id) => { $(id).disabled = (cur === 0); });
+  ["nextBtn", "mNext"].forEach((id) => { $(id).innerText = last ? "Bitir" : "Sonraki"; });
+
+  renderPalette();
 }
 
-function selectOption(qId, key) {
-  userAnswers[qId] = key;
-  loadQuestion(currentQuestionIndex);
-  updateAnsweredCount();
-}
-
-function clearAnswer() {
-  if (isReviewMode) return;
-  const qId = questionsData[currentQuestionIndex].id;
-  delete userAnswers[qId];
-  loadQuestion(currentQuestionIndex);
-  updateAnsweredCount();
+function selectOption(id, key) {
+  if (answers[id]) return; // cevap kilitli
+  answers[id] = key;
+  saveProgress();
+  renderQuestion();
 }
 
 function nextQuestion() {
-  if (currentQuestionIndex < questionsData.length - 1) {
-    loadQuestion(currentQuestionIndex + 1);
-  } else {
-    finishExam();
-  }
+  if (cur < TOTAL - 1) { cur++; saveProgress(); renderQuestion(); window.scrollTo(0, 0); }
+  else finishExam();
 }
-
 function prevQuestion() {
-  if (currentQuestionIndex > 0) loadQuestion(currentQuestionIndex - 1);
+  if (cur > 0) { cur--; saveProgress(); renderQuestion(); window.scrollTo(0, 0); }
 }
+function goTo(i) { cur = i; saveProgress(); renderQuestion(); togglePalette(false); window.scrollTo(0, 0); }
 
 function renderPalette() {
-  const grid = document.getElementById("paletteGrid");
-  grid.innerHTML = "";
-  questionsData.forEach((q, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "palette-btn";
-    btn.id = `palette-btn-${q.id}`;
-    btn.innerText = q.id;
-    btn.onclick = () => loadQuestion(idx);
-    grid.appendChild(btn);
-  });
-}
-
-function updatePaletteStatus() {
-  questionsData.forEach((q, idx) => {
-    const btn = document.getElementById(`palette-btn-${q.id}`);
-    if (!btn) return;
-    btn.className = "palette-btn";
-    if (idx === currentQuestionIndex) btn.classList.add("active");
-    if (userAnswers[q.id] === q.answer) btn.classList.add("correct");
-    else if (userAnswers[q.id]) btn.classList.add("incorrect");
-  });
-}
-
-function updateAnsweredCount() {
-  const answered = Object.keys(userAnswers).length;
-  document.getElementById("answeredCount").innerText = `${answered}/${questionsData.length}`;
-}
-
-// Sınavı Bitir
-function finishExam() {
-  const answered = Object.keys(userAnswers).length;
-  const unanswered = questionsData.length - answered;
-
-  let confirmMsg = "Sınavı bitirmek istediğinize emin misiniz?";
-  if (unanswered > 0) {
-    confirmMsg = `Dikkat: ${unanswered} adet boş sorunuz var! Sınavı tamamlayıp sonuçları görmek istiyor musunuz?`;
+  const grid = $("paletteGrid");
+  if (!grid.children.length) {
+    questionsData.forEach((q, i) => {
+      const b = document.createElement("button");
+      b.className = "pbtn";
+      b.id = "p" + q.id;
+      b.innerText = q.id;
+      b.onclick = () => goTo(i);
+      grid.appendChild(b);
+    });
   }
-
-  if (!confirm(confirmMsg)) return;
-
-  calculateAndShowResults();
-}
-
-// Sonuç Hesaplama ve Otomatik Kayıt
-function calculateAndShowResults() {
-  let correct = 0;
-  let wrong = 0;
-  let blank = 0;
-
-  questionsData.forEach(q => {
-    const userChoice = userAnswers[q.id];
-    if (!userChoice) blank++;
-    else if (userChoice === q.answer) correct++;
-    else wrong++;
+  let ok = 0;
+  questionsData.forEach((q, i) => {
+    const b = $("p" + q.id);
+    b.className = "pbtn";
+    const a = answers[q.id];
+    if (a) { b.classList.add(a === q.answer ? "ok" : "bad"); if (a === q.answer) ok++; }
+    if (i === cur) b.classList.add("active");
   });
-
-  const percentage = Math.round((correct / questionsData.length) * 100);
-  const currentAttemptNum = getAttemptCount() + 1;
-
-  // Başlık ve Buton Metnini Ayarla
-  document.getElementById("resAttemptTitle").innerText = `🎉 ${currentAttemptNum}. Deneme Tamamlandı!`;
-  document.getElementById("resPercentage").innerText = `%${percentage}`;
-  document.getElementById("resCorrect").innerText = correct;
-  document.getElementById("resWrong").innerText = wrong;
-  document.getElementById("resBlank").innerText = blank;
-  document.getElementById("nextAttemptBtn").innerText = `🔄 ${currentAttemptNum + 1}. Denemeye Başla (Tekrar Çöz)`;
-
-  let feedback = "Gelişim devam ediyor, bir sonraki denemede daha yüksek yapacaksın!";
-  if (percentage >= 85) feedback = "Mükemmel! Artık sınav formatını tamamen ezberledin 🚀";
-  else if (percentage >= 70) feedback = "Çok iyi gidiyorsun! Yanlışları inceleyip hemen yeni denemeye geç 👍";
-  document.getElementById("resFeedback").innerText = feedback;
-
-  // LocalStorage'a Kaydet
-  saveAttemptToHistory(currentAttemptNum, correct, wrong, blank, percentage);
-  localStorage.removeItem("examProgress");
-
-  // Ekranı Değiştir
-  document.getElementById("examScreen").style.display = "none";
-  document.getElementById("finishBtnHeader").style.display = "none";
-  document.getElementById("resultsScreen").style.display = "block";
+  $("answeredCount").innerText = `${Object.keys(answers).length}/${TOTAL}`;
 }
 
-// Bir Sonraki Denemeye Geç (Tekrar Çöz)
-function startNextAttempt() {
-  userAnswers = {};
-  isReviewMode = false;
-  
-  updateAttemptBadges();
-  document.getElementById("clearBtn").style.display = "none";
-  document.getElementById("resultsScreen").style.display = "none";
-  document.getElementById("examScreen").style.display = "grid";
-  document.getElementById("finishBtnHeader").style.display = "inline-flex";
-
-  updateAnsweredCount();
-  loadQuestion(0);
+/* ---------- Bitirme ve sonuç ---------- */
+function stats(ans) {
+  let correct = 0, wrong = 0, blank = 0;
+  questionsData.forEach((q) => {
+    const a = ans[q.id];
+    if (!a) blank++; else if (a === q.answer) correct++; else wrong++;
+  });
+  return { correct, wrong, blank, pct: Math.round((correct / TOTAL) * 100) };
 }
 
-// Cevapları İncele
-function reviewExam() {
-  isReviewMode = true;
-  document.getElementById("resultsScreen").style.display = "none";
-  document.getElementById("examScreen").style.display = "grid";
-  document.getElementById("clearBtn").style.display = "none";
-  loadQuestion(0);
+function feedbackText(p) {
+  if (p >= 85) return "Çok iyi, konulara hakimsin.";
+  if (p >= 70) return "İyi gidiyorsun. Yanlışlarını incelemeni öneririm.";
+  if (p >= 50) return "Fena değil. Yanlış yaptığın konulara tekrar bak.";
+  return "Biraz daha tekrar gerekiyor. Soruları inceleyip yeniden dene.";
 }
 
-// LocalStorage İşlemleri
-function saveAttemptToHistory(attemptNum, c, w, b, pct) {
-  const history = JSON.parse(localStorage.getItem("examHistory") || "[]");
-  const newAttempt = {
-    attemptNumber: attemptNum,
+function finishExam() {
+  const unanswered = TOTAL - Object.keys(answers).length;
+  const msg = unanswered > 0
+    ? `${unanswered} soru boş. Yine de bitirmek istiyor musun?`
+    : "Sınavı bitirmek istiyor musun?";
+  if (!confirm(msg)) return;
+
+  const s = stats(answers);
+  const history = getHistory();
+  const num = history.length + 1;
+  history.push({
+    attemptNumber: num,
     date: new Date().toLocaleString("tr-TR"),
-    correct: c,
-    wrong: w,
-    blank: b,
-    percentage: pct
-  };
-  history.push(newAttempt);
-  localStorage.setItem("examHistory", JSON.stringify(history));
+    correct: s.correct, wrong: s.wrong, blank: s.blank, percentage: s.pct,
+    answers: answers
+  });
+  setHistory(history);
+  localStorage.removeItem(KEY_PROGRESS);
+  lastSavedIndex = history.length - 1;
+
+  $("resTitle").innerText = `${num}. deneme tamamlandı`;
+  $("resPercent").innerText = `%${s.pct}`;
+  $("resMsg").innerText = feedbackText(s.pct);
+  $("resCorrect").innerText = s.correct;
+  $("resWrong").innerText = s.wrong;
+  $("resBlank").innerText = s.blank;
+  $("newAttemptBtn").innerText = `${num + 1}. denemeye başla`;
+  showScreen("results");
 }
 
-function openHistoryModal() {
-  const history = JSON.parse(localStorage.getItem("examHistory") || "[]");
-  const container = document.getElementById("historyContent");
+function startNewAttempt() {
+  answers = {};
+  cur = 0;
+  localStorage.removeItem(KEY_PROGRESS);
+  updateBrand();
+  renderQuestion();
+  showScreen("exam");
+}
+
+function backToExam() {
+  updateBrand();
+  renderQuestion();
+  showScreen("exam");
+}
+
+/* ---------- Geçmiş ---------- */
+function pctColor(p) { return p >= 70 ? "c-ok" : (p >= 50 ? "c-warn" : "c-bad"); }
+
+function openHistory() {
+  const history = getHistory();
+  const list = $("historyList");
+  const chart = $("chart");
+  list.innerHTML = "";
+  chart.innerHTML = "";
+  $("chartPanel").hidden = history.length < 1;
+  $("clearAllBtn").hidden = history.length < 1;
 
   if (history.length === 0) {
-    container.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted);">Henüz tamamlanan bir denemeniz yok. Sınavı tamamladığınızda 1. Denemeniz buraya eklenecektir.</div>`;
-  } else {
-    let html = `
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Deneme</th>
-            <th>Tarih & Saat</th>
-            <th>Doğru</th>
-            <th>Yanlış</th>
-            <th>Boş</th>
-            <th>Başarı %</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    history.forEach(item => {
-      let badgeBg = "#fee2e2; color: #ef4444;";
-      if (item.percentage >= 75) badgeBg = "#dcfce7; color: #15803d;";
-      else if (item.percentage >= 50) badgeBg = "#fef3c7; color: #b45309;";
-
-      html += `
-        <tr>
-          <td><b style="color:var(--primary); font-size:0.95rem;">${item.attemptNumber}. Deneme</b></td>
-          <td style="font-size: 0.8rem; color: var(--text-muted);">${item.date}</td>
-          <td style="color: var(--success); font-weight: 700;">${item.correct}</td>
-          <td style="color: var(--danger); font-weight: 700;">${item.wrong}</td>
-          <td style="color: var(--warning); font-weight: 700;">${item.blank}</td>
-          <td><span class="badge-percent" style="background:${badgeBg}">%${item.percentage}</span></td>
-        </tr>
-      `;
-    });
-
-    html = `<div class="history-wrap">${html}</tbody></table></div>`;
-    container.innerHTML = html;
+    list.innerHTML = `<div class="panel empty">Henüz tamamlanmış bir deneme yok. İlk denemeni bitirdiğinde burada görünecek.</div>`;
   }
-  document.getElementById("historyModal").style.display = "flex";
-}
 
-function closeHistoryModal() {
-  document.getElementById("historyModal").style.display = "none";
+  history.forEach((h, i) => {
+    const col = document.createElement("div");
+    col.className = "chart-col";
+    col.innerHTML = `<em class="${pctColor(h.percentage)}">${h.percentage}</em><div class="chart-bar" style="height:${Math.max(h.percentage, 3) * 0.7}px"></div><small>${h.attemptNumber}</small>`;
+    chart.appendChild(col);
+  });
+
+  history.map((h, i) => ({ h, i })).reverse().forEach(({ h, i }) => {
+    const b = document.createElement("button");
+    b.className = "hist-item";
+    b.innerHTML = `
+      <div class="hist-pct ${pctColor(h.percentage)}">%${h.percentage}</div>
+      <div class="hist-main"><b>${h.attemptNumber}. Deneme</b><span>${h.date}</span></div>
+      <div class="hist-counts"><span class="c-ok">${h.correct} D</span> · <span class="c-bad">${h.wrong} Y</span> · <span class="c-warn">${h.blank} B</span></div>
+      <div class="chev">›</div>`;
+    b.onclick = () => openDetail(i);
+    list.appendChild(b);
+  });
+
+  showScreen("history");
 }
 
 function clearHistory() {
-  if (confirm("Tüm deneme geçmişi silinecek. Emin misiniz?")) {
-    localStorage.removeItem("examHistory");
-    updateAttemptBadges();
-    openHistoryModal();
+  if (confirm("Tüm deneme geçmişi silinecek. Emin misin?")) {
+    localStorage.removeItem(KEY_HISTORY);
+    updateBrand();
+    openHistory();
   }
 }
+
+/* ---------- Deneme detayı ---------- */
+function openDetail(i) {
+  const h = getHistory()[i];
+  if (!h) { openHistory(); return; }
+  viewIndex = i;
+  detailFilter = "all";
+
+  $("dTitle").innerText = `${h.attemptNumber}. Deneme`;
+  $("dPercent").innerText = `%${h.percentage}`;
+  $("dDate").innerText = h.date;
+  $("dCorrect").innerText = h.correct;
+  $("dWrong").innerText = h.wrong;
+  $("dBlank").innerText = h.blank;
+
+  const hasDetail = !!h.answers;
+  $("dNote").hidden = hasDetail;
+  $("dQuestions").hidden = !hasDetail;
+  if (hasDetail) renderDetailList();
+  showScreen("detail");
+}
+
+function statusOf(q, ans) {
+  const a = ans[q.id];
+  if (!a) return "blank";
+  return a === q.answer ? "ok" : "bad";
+}
+
+function renderDetailList() {
+  const h = getHistory()[viewIndex];
+  const ans = h.answers;
+  const counts = { all: TOTAL, bad: h.wrong, ok: h.correct, blank: h.blank };
+  const labels = { all: "Tümü", bad: "Yanlış", ok: "Doğru", blank: "Boş" };
+
+  const chips = $("chips");
+  chips.innerHTML = "";
+  Object.keys(labels).forEach((k) => {
+    const c = document.createElement("button");
+    c.className = "chip" + (detailFilter === k ? " on" : "");
+    c.innerText = `${labels[k]} (${counts[k]})`;
+    c.onclick = () => { detailFilter = k; renderDetailList(); };
+    chips.appendChild(c);
+  });
+
+  const list = $("qlist");
+  list.innerHTML = "";
+  const shown = questionsData.filter((q) => detailFilter === "all" || statusOf(q, ans) === detailFilter);
+  if (!shown.length) {
+    list.innerHTML = `<div class="panel empty">Bu filtrede soru yok.</div>`;
+    return;
+  }
+
+  shown.forEach((q) => {
+    const st = statusOf(q, ans);
+    const chosen = ans[q.id];
+    const d = document.createElement("details");
+    d.className = "qcard";
+
+    const s = document.createElement("summary");
+    const no = document.createElement("span");
+    no.className = "qno " + st;
+    no.innerText = q.id;
+    const sum = document.createElement("span");
+    sum.className = "qsum";
+    sum.innerText = q.text;
+    s.append(no, sum);
+
+    const body = document.createElement("div");
+    body.className = "qbody";
+    const opts = document.createElement("div");
+    opts.className = "options";
+    for (const [key, val] of Object.entries(q.options)) {
+      const o = document.createElement("div");
+      o.className = "opt static";
+      let tag = "";
+      if (key === q.answer) { o.classList.add("correct"); tag = (key === chosen) ? "Senin cevabın · Doğru" : "Doğru cevap"; }
+      else if (key === chosen) { o.classList.add("wrong"); tag = "Senin cevabın"; }
+      const k = document.createElement("span");
+      k.className = "opt-key"; k.innerText = key;
+      const t = document.createElement("span");
+      t.className = "opt-text"; t.innerText = val;
+      o.append(k, t);
+      if (tag) { const g = document.createElement("span"); g.className = "tag"; g.innerText = tag; o.appendChild(g); }
+      opts.appendChild(o);
+    }
+    body.appendChild(opts);
+    if (!chosen) {
+      const n = document.createElement("div");
+      n.className = "note"; n.innerText = "Bu soruyu boş bıraktın.";
+      body.appendChild(n);
+    }
+    d.append(s, body);
+    list.appendChild(d);
+  });
+}
+
+function deleteAttempt() {
+  if (viewIndex === null) return;
+  if (!confirm("Bu deneme silinsin mi?")) return;
+  const history = getHistory();
+  history.splice(viewIndex, 1);
+  history.forEach((h, i) => { h.attemptNumber = i + 1; });
+  setHistory(history);
+  updateBrand();
+  openHistory();
+}
+
+/* ---------- Başlangıç ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+  loadProgress();
+  updateBrand();
+  renderQuestion();
+  showScreen("exam");
+});
 </script>
 </body>
 </html>
