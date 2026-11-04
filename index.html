@@ -346,16 +346,37 @@ function updateAttemptBadges() {
   document.getElementById("currentAttemptHeaderBadge").innerText = `${nextAttemptNum}. Deneme`;
 }
 
+// Devam eden sınavı kaydet / geri yükle (sayfa yenilense de kaldığın yerden devam)
+function saveProgress() {
+  if (isReviewMode) return;
+  localStorage.setItem("examProgress", JSON.stringify({ index: currentQuestionIndex, answers: userAnswers }));
+}
+
+function restoreProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("examProgress") || "null");
+    if (!saved) return 0;
+    userAnswers = saved.answers || {};
+    const idx = Number(saved.index);
+    return idx >= 0 && idx < questionsData.length ? idx : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
 // Sayfa Yüklendiğinde
 window.addEventListener("DOMContentLoaded", () => {
+  const startIndex = restoreProgress();
   updateAttemptBadges();
   renderPalette();
-  loadQuestion(0);
+  updateAnsweredCount();
+  loadQuestion(startIndex);
 });
 
 // Soru Yükleme
 function loadQuestion(index) {
   currentQuestionIndex = index;
+  saveProgress();
   const q = questionsData[index];
 
   document.getElementById("qNumber").innerText = `Soru ${q.id} / ${questionsData.length}`;
@@ -511,6 +532,7 @@ function calculateAndShowResults() {
 
   // LocalStorage'a Kaydet
   saveAttemptToHistory(currentAttemptNum, correct, wrong, blank, percentage);
+  localStorage.removeItem("examProgress");
 
   // Ekranı Değiştir
   document.getElementById("examScreen").style.display = "none";
