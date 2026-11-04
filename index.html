@@ -4,6 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem Analizi ve Tasarımı - Sınav Simülatörü</title>
+  <meta name="description" content="Sistem Analizi ve Tasarımı - 84 soruluk sınav simülatörü">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Link önizlemesi (WhatsApp, Telegram, Twitter vb.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sistem Analizi ve Tasarımı - Sınav Simülatörü">
+  <meta property="og:description" content="84 soruluk çalışma soruları test simülatörü. Denemeni çöz, gelişimini takip et.">
+  <meta property="og:url" content="https://fatiherolbahar.github.io/sistem_analizi_tasar-m-/">
+  <meta property="og:image" content="https://fatiherolbahar.github.io/sistem_analizi_tasar-m-/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://fatiherolbahar.github.io/sistem_analizi_tasar-m-/og-image.png">
+  <meta name="theme-color" content="#4f46e5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -108,6 +123,38 @@
     .history-table th, .history-table td { padding: 12px 10px; font-size: 0.875rem; text-align: center; border-bottom: 1px solid var(--border); }
     .history-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; }
     .badge-percent { padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; }
+    /* Mobil Uyumluluk */
+    html { -webkit-text-size-adjust: 100%; }
+    button, .option-item, .palette-btn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .history-wrap { overflow-x: auto; }
+
+    @media (max-width: 900px) {
+      .sidebar-card { position: static; }
+      .palette-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); max-height: 260px; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 12px 10px; }
+      .container { gap: 14px; }
+      header { padding: 14px; }
+      header h1 { font-size: 1rem; flex-wrap: wrap; }
+      .header-btns { width: 100%; }
+      .header-btns .btn { flex: 1; padding: 10px 8px; font-size: 0.82rem; }
+      .card { padding: 16px; }
+      .q-text { font-size: 1rem; margin-bottom: 18px; }
+      .option-item { padding: 12px; gap: 10px; }
+      .opt-key { width: 30px; height: 30px; }
+      .opt-text { font-size: 0.93rem; }
+      .q-actions { flex-direction: column-reverse; align-items: stretch; margin-top: 20px; }
+      .q-actions .btn { width: 100%; padding: 13px 18px; }
+      .score-banner { padding: 24px 12px; }
+      .score-percentage { font-size: 2.8rem; }
+      .score-metrics { grid-template-columns: repeat(2, 1fr); }
+      #resultsScreen .card > div:last-child { flex-direction: column; }
+      #resultsScreen .card > div:last-child .btn { width: 100%; }
+      .modal-box { padding: 16px; max-height: 90vh; }
+      .history-table th, .history-table td { padding: 8px 4px; font-size: 0.78rem; }
+    }
   </style>
 </head>
 <body>
@@ -116,7 +163,7 @@
   <!-- Header -->
   <header>
     <div>
-      <h1>📘 Sistem Analizi ve Tasarımı <span id="currentAttemptHeaderBadge" class="attempt-badge">1. Deneme</span></h1>
+      <h1><img src="logo.svg" alt="Logo" style="width:32px;height:32px;border-radius:8px;"> Sistem Analizi ve Tasarımı <span id="currentAttemptHeaderBadge" class="attempt-badge">1. Deneme</span></h1>
       <span style="font-size: 0.85rem; color: var(--text-muted);">84 Soruluk Çalışma Soruları Test Simülatörü</span>
     </div>
     <div class="header-btns">
@@ -546,7 +593,7 @@ function openHistoryModal() {
       `;
     });
 
-    html += `</tbody></table>`;
+    html = `<div class="history-wrap">${html}</tbody></table></div>`;
     container.innerHTML = html;
   }
   document.getElementById("historyModal").style.display = "flex";
