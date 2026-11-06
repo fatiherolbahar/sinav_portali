@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akademik Test & Sınav Portalı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; padding: 20px 14px; display: flex; flex-direction: column; align-items: center; }
+    .container { width: 100%; max-width: 1140px; display: flex; flex-direction: column; gap: 18px; }
+
+    /* Top Navigation Bar */
+    header { background: var(--bg-card); border: 1px solid var(--border); padding: 18px 24px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); flex-wrap: wrap; gap: 14px; }
+    .portal-brand { display: flex; align-items: center; gap: 12px; }
+    .portal-brand h1 { font-size: 1.25rem; font-weight: 800; color: var(--primary); letter-spacing: -0.02em; }
+    .badge-attempt { background: #e0e7ff; color: var(--primary); font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+
+    .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .select-course { background: #f8fafc; border: 1.5px solid var(--border); padding: 8px 14px; border-radius: 10px; font-weight: 600; font-size: 0.875rem; color: var(--text-main); cursor: pointer; outline: none; }
+    .select-course:focus { border-color: var(--primary); }
+
+    /* Filter Bar */
+    .filter-bar { background: var(--bg-card); border: 1px solid var(--border); padding: 12px 20px; border-radius: var(--radius); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: var(--shadow); }
+    .category-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { background: #f1f5f9; border: 1px solid var(--border); padding: 6px 14px; border-radius: 999px; font-size: 0.825rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+    .pill:hover { border-color: var(--primary); color: var(--primary); }
+    .pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .toggle-wrapper { display: flex; align-items: center; gap: 8px; font-size: 0.825rem; font-weight: 600; color: var(--text-muted); }
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--success); }
+    input:checked + .slider:before { transform: translateX(18px); }
+
+    /* Live Stats Ribbon */
+    .live-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .stat-pill { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; text-align: center; }
+    .stat-pill .num { font-size: 1.25rem; font-weight: 800; }
+    .stat-pill .lbl { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+    .stat-c { color: var(--success); }
+    .stat-w { color: var(--danger); }
+    .stat-b { color: var(--warning); }
+    .stat-p { color: var(--primary); }
+
+    /* Layout */
+    .exam-layout { display: grid; grid-template-columns: 1fr 310px; gap: 18px; align-items: start; }
+    @media (max-width: 900px) { .exam-layout { grid-template-columns: 1fr; } }
+
+    /* Card */
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); }
+    .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .q-badge { background: #f1f5f9; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+    .q-number { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+    .q-text { font-size: 1.1rem; line-height: 1.6; font-weight: 600; color: var(--text-main); margin-bottom: 22px; }
+
+    /* Options */
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; background: #fff; }
+    .option-item:hover { border-color: var(--primary); background: #f8faff; }
+    .opt-key { width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--text-muted); flex-shrink: 0; }
+    .opt-text { font-size: 0.95rem; line-height: 1.5; color: #334155; padding-top: 4px; }
+
+    /* Answer States */
+    .option-item.selected { border-color: var(--primary); background: #eef2ff; }
+    .option-item.selected .opt-key { background: var(--primary); color: #fff; }
+    .option-item.correct { border-color: var(--success) !important; background: #ecfdf5 !important; }
+    .option-item.correct .opt-key { background: var(--success) !important; color: #fff !important; }
+    .option-item.incorrect { border-color: var(--danger) !important; background: #fef2f2 !important; }
+    .option-item.incorrect .opt-key { background: var(--danger) !important; color: #fff !important; }
+
+    /* Feedback Banner */
+    .feedback-banner { margin-top: 18px; padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; display: none; }
+    .feedback-banner.c { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; display: block; }
+    .feedback-banner.w { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; display: block; }
+
+    /* Actions */
+    .q-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: 0.2s; border: none; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #f1f5f9; color: #334155; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { background: #059669; }
+
+    /* Palette */
+    .sidebar-card { position: sticky; top: 16px; }
+    .palette-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; max-height: 400px; overflow-y: auto; padding-right: 4px; margin-top: 12px; }
+    .palette-btn { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border); background: #f8fafc; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: 0.15s; }
+    .palette-btn.active { outline: 2px solid var(--primary); font-weight: 800; border-color: var(--primary); }
+    .palette-btn.answered { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .palette-btn.correct { background: var(--success); color: #fff; border-color: var(--success); }
+    .palette-btn.incorrect { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+    /* Results */
+    .results-screen { display: none; }
+    .score-hero { text-align: center; padding: 36px 20px; background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%); border-radius: 14px; margin-bottom: 20px; }
+    .score-pct { font-size: 3.5rem; font-weight: 800; color: var(--primary); }
+
+    /* Modals */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 14px; }
+    .modal-box { background: #fff; border-radius: var(--radius); width: 100%; max-width: 760px; max-height: 88vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.875rem; }
+    .history-table th, .history-table td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border); }
+    .history-table th { background: #f8fafc; font-weight: 700; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="portal-brand">
+      <h1>🎓 Sınav Portalı</h1>
+      <span class="badge-attempt" id="headerAttemptBadge">1. Deneme</span>
+    </div>
+    <div class="header-controls">
+      <select id="courseSelect" class="select-course" onchange="changeCourse(this.value)">
+        <!-- Kurslar JS ile dinamik dolar -->
+      </select>
+      <button class="btn btn-secondary" onclick="openHistoryModal()">📊 Deneme Geçmişi</button>
+      <button id="finishBtnHeader" class="btn btn-success" onclick="finishExam()">✓ Sınavı Bitir</button>
+    </div>
+  </header>
+
+  <!-- Filter & Settings Bar -->
+  <div class="filter-bar">
+    <div class="category-pills" id="categoryPills">
+      <!-- Kategori hapları JS ile dolar -->
+    </div>
+    <div class="toggle-wrapper">
+      <span>Anlık Geri Bildirim:</span>
+      <label class="switch">
+        <input type="checkbox" id="instantFeedbackToggle" checked onchange="toggleInstantFeedback(this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Live Stats Ribbon -->
+  <div class="live-stats">
+    <div class="stat-pill"><div class="num stat-p" id="liveTotal">0</div><div class="lbl">Soru Sayısı</div></div>
+    <div class="stat-pill"><div class="num stat-c" id="liveCorrect">0</div><div class="lbl">Doğru</div></div>
+    <div class="stat-pill"><div class="num stat-w" id="liveWrong">0</div><div class="lbl">Yanlış</div></div>
+    <div class="stat-pill"><div class="num stat-b" id="liveBlank">0</div><div class="lbl">Kalan / Boş</div></div>
+    <div class="stat-pill"><div class="num stat-p" id="liveScore">%0</div><div class="lbl">Canlı Başarı</div></div>
+  </div>
+
+  <!-- Exam Screen -->
+  <div id="examScreen" class="exam-layout">
+    <!-- Left: Question -->
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-badge" id="qCategoryBadge">Word</span>
+        <span class="q-number" id="qNumber">Soru 1 / 49</span>
+      </div>
+      <div class="q-text" id="qText">Soru yükleniyor...</div>
+      <div class="options-list" id="optionsList"></div>
+
+      <!-- Instant Feedback Msg -->
+      <div class="feedback-banner" id="feedbackBanner"></div>
+
+      <div class="q-actions">
+        <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">← Önceki</button>
+        <button class="btn btn-danger" id="clearBtn" onclick="clearAnswer()">Boş Bırak / Temizle</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Sonraki →</button>
+      </div>
+    </div>
+
+    <!-- Right: Question Palette -->
+    <div class="card sidebar-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; font-size: 0.9rem;">Soru Paleti</span>
+        <span id="answeredRatio" style="font-size: 0.8rem; background: #eef2ff; color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">0/0</span>
+      </div>
+      <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="resultsScreen" class="results-screen">
+    <div class="card">
+      <div class="score-hero">
+        <h2 id="resAttemptTitle" style="font-size: 1.2rem; color: var(--primary); margin-bottom: 6px;">1. Deneme Tamamlandı!</h2>
+        <div class="score-pct" id="resPercentage">%0</div>
+        <div style="font-size: 1.1rem; color: var(--text-muted); font-weight: 600;" id="resFeedback">Tebrikler!</div>
+      </div>
+
+      <div class="live-stats" style="margin-bottom: 24px;">
+        <div class="stat-pill"><div class="num stat-c" id="resCorrect">0</div><div class="lbl">Doğru</div></div>
+        <div class="stat-pill"><div class="num stat-w" id="resWrong">0</div><div class="lbl">Yanlış</div></div>
+        <div class="stat-pill"><div class="num stat-b" id="resBlank">0</div><div class="lbl">Boş</div></div>
+        <div class="stat-pill"><div class="num stat-p" id="resNet">0</div><div class="lbl">Net Puan</div></div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-success" id="nextAttemptBtn" onclick="startNextAttempt()" style="font-size: 1rem; padding: 12px 24px;">🔄 2. Denemeye Başla</button>
+        <button class="btn btn-primary" onclick="reviewExam('all')">🔍 Tüm Soruları İncele</button>
+        <button class="btn btn-danger" onclick="reviewExam('wrong')">❌ Sadece Yanlışları İncele</button>
+        <button class="btn btn-secondary" onclick="openHistoryModal()">📊 Deneme Geçmişim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal-backdrop" id="historyModal">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+      <h2 style="font-size: 1.2rem; font-weight: 800;">🏆 Deneme ve Gelişim Geçmişi</h2>
+      <button style="border:none; background:none; font-size:1.5rem; cursor:pointer;" onclick="closeHistoryModal()">&times;</button>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Her denemenizin başarı yüzdesi, doğru/yanlış/boş oranları tarayıcınızda kalıcı olarak saklanır.</p>
+    <div id="historyTableContainer"></div>
+    <div style="margin-top: 18px; display: flex; justify-content: space-between;">
+      <button class="btn btn-danger" onclick="clearCurrentCourseHistory()">Geçmişi Sıfırla</button>
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * -------------------------------------------------------------
+ * MODÜLER DERS VERİ SETİ (İLERİYE DÖNÜK MİMARİ)
+ * Yeni ders eklemek için buraya yeni bir anahtar açmanız yeterlidir.
+ * -------------------------------------------------------------
+ */
+const COURSES_DATA = {
+  "ofis": {
+    name: "Temel Bilgi Teknolojileri (Ofis)",
+    categories: ["Tümü", "Word", "Excel", "PowerPoint"],
+    questions: [
+      { id: 1, category: "Word", question: "Word programı temel olarak ne amaçla kullanılmaktadır?", options: { a: "Sürücüler üzerinde kopyalama ve taşıma işlemleri yapılır", b: "Hesap tabloları oluşturulur, veri tablosunun grafikleri oluşturulur", c: "Kelime işlemci programıdır. Belge ve dokümanlar hazırlanır", d: "Resim hazırlanır ve resimler üzerinde ayarlamalar yapılır" }, answer: "c" },
+      { id: 2, category: "Word", question: "Yazı yazarken Enter tuşuna basmak Word’de ne anlama gelir?", options: { a: "Yeni sütun başına geçer", b: "Kelimeler arası boşluk verir", c: "Paragraf başı yapar", d: "Yeni sayfa başına geçer" }, answer: "c" },
+      { id: 3, category: "Word", question: "Belgeye resim eklemek için aşağıdaki seçeneklerden hangisi doğru bir yol tanımlamasıdır?", options: { a: "Ekle (Insert) – SmartArt", b: "Ekle (Insert) – Resimler (Picture)", c: "Ekle (Insert) – Şekiller (Shapes)", d: "Ekle (Insert) – Tablo (Table)" }, answer: "b" },
+      { id: 4, category: "Word", question: "Metnin tamamını seçmek için klavyede hangi tuşlar kullanılır?", options: { a: "CTRL + A", b: "SHIFT + A", c: "CTRL + S", d: "CTRL + V" }, answer: "a" },
+      { id: 5, category: "Word", question: "Word programında hazırlanan dosyaların (belge) uzantısı aşağıdakilerden hangisidir?", options: { a: ".xlsx", b: ".docx", c: ".bmpx", d: ".dotx" }, answer: "b" },
+      { id: 6, category: "Word", question: "B, I, U (Kalın, İtalik, Altı Çizili) simgelerinin isimleri aşağıdaki seçeneklerin hangisinde doğru olarak verilmiştir?", options: { a: "İtalik – Altı Çizili – Alt Simge", b: "Altı Çizili – Kalın – Üst Simge", c: "İnce – Altı Çizili – İtalik", d: "Kalın – İtalik – Altı Çizili" }, answer: "d" },
+      { id: 7, category: "Word", question: "Microsoft Word’de Dosya (File) menüsünde aşağıdakilerden hangisi bulunmaz?", options: { a: "Yeni (New)", b: "Tablo ekle (Insert Table)", c: "Aç (Open)", d: "Kaydet (Save)" }, answer: "b" },
+      { id: 8, category: "Word", question: "Metin hizalama simgeleri (Sola ve Ortaya) ne için kullanılır?", options: { a: "Yazılarımızı renkli yapmaya yarar", b: "Yazılarımızın yönünü değiştirir", c: "Yazılarımızı sola ve ortaya hizalar", d: "Yazımızı sütunlara böler" }, answer: "c" },
+      { id: 9, category: "Word", question: "Belge içerisinde 1. sayfadan bir nesneyi seçtikten sonra Ctrl+C tuşlarına basıp, daha sonra 2. sayfaya geçerek Ctrl+V tuşlarına basılırsa ne olur?", options: { a: "1. sayfadaki nesne, 2. sayfaya taşınır", b: "2. sayfadaki nesne, 1. sayfaya taşınır", c: "2. sayfadaki nesne, 1. sayfaya kopyalanır", d: "1. sayfadaki nesne, 2. sayfaya kopyalanır" }, answer: "d" },
+      { id: 10, category: "Word", question: "Madde işaretleri ve numaralandırma ile ilgili aşağıdakilerden hangisi yanlıştır?", options: { a: "Paragraf menüsünde yer alır.", b: "Bu soruların şıkları yazılırken kullanılmıştır.", c: "Sayfaya otomatik sayfa numarası verir.", d: "Madde işaretlerinin renkleri değiştirilebilir." }, answer: "c" },
+      { id: 11, category: "Word", question: "Aşağıdakilerden hangisi bir Yazı Tipi (Font) stili değildir?", options: { a: "Kalın (Bold)", b: "İtalik (Italic)", c: "Normal (Regular)", d: "Üstsimge (Superscript)" }, answer: "c" },
+      { id: 12, category: "Word", question: "Word’de bir metin yazarken paragraf başı yapmak için hangi tuşa ya da tuşlara basılır?", options: { a: "Aşağı Ok tuşu", b: "Enter tuşu", c: "Shift + Enter", d: "Ctrl + Enter" }, answer: "b" },
+      { id: 13, category: "Word", question: "Belgeye Üstbilgi (Header) ve Altbilgi (Footer) eklemek için hangi menü kullanılır?", options: { a: "Biçim (Format) menüsü", b: "Görünüm (View) menüsü", c: "Araçlar (Tools) menüsü", d: "Ekle (Insert) menüsü" }, answer: "d" },
+      { id: 14, category: "Word", question: "Aşağıdakilerden hangisi bir Satır Aralığı (Line Spacing) türü değildir?", options: { a: "Çoklu (Multiple)", b: "Üçlü (Triple)", c: "Çift (Double)", d: "Tek (Single)" }, answer: "b" },
+      { id: 15, category: "Word", question: "Bir metni taşıma işlemi aşağıdakilerden hangi işlem grubu ile yapılabilir?", options: { a: "Kopyala ve Yapıştır", b: "Kes ve Kopyala", c: "Kes ve Yapıştır", d: "Yapıştır ve Sil" }, answer: "c" },
+      { id: 16, category: "Word", question: "Biçim Boyacısı (Format Painter) işlevi ne için kullanılır?", options: { a: "Bir metnin rengini değiştirmek", b: "Biçimlendirmeyi kopyalayıp, başka bir yere uygulamak", c: "Seçili bir metni silmek", d: "Arka plan rengi uygulamak" }, answer: "b" },
+      { id: 17, category: "Word", question: "Ekle (Insert) menüsünde ClipArt seçildiğinde aşağıdakilerden hangisi ilk olarak gerçekleşir?", options: { a: "Belgeye bir ClipArt resmi eklenir", b: "Belgeye eklenecek ClipArt resmini seçme seçeneği sunulur", c: "ClipArt görev menüsü açılır", d: "Hiçbiri" }, answer: "c" },
+      { id: 18, category: "Word", question: "Hizalama komutlarının (Sola, Ortala, Sağa, Yasla) görevleri sırasıyla nelerdir?", options: { a: "Ortala – Sola hizala – Yasla – Sağa hizala", b: "Sola hizala – Ortala – Sağa hizala –Yasla", c: "Yasla – Ortala – Sola hizala – Sağa hizala", d: "Yasla – Sağa hizala – Ortala – Sola hizala" }, answer: "b" },
+      { id: 19, category: "Word", question: "Tablo simgesinin görevi nedir?", options: { a: "Resim Ekle", b: "Şekil Ekle", c: "Metin Kutusu Ekle", d: "Tablo Ekle" }, answer: "d" },
+      { id: 20, category: "Word", question: "Bir Word belgesinde her sayfanın alt kısmında aynı metnin yazılı olması hangi özellik ile sağlanır?", options: { a: "Üstbilgi (Header)", b: "Dipnot (Footnote)", c: "Başlık (Title)", d: "Altbilgi (Footer)" }, answer: "d" },
+      { id: 21, category: "Word", question: "Sayfa numarası aşağıdaki alanlardan hangisinde yer alabilir?", options: { a: "Dipnot (Footnote)", b: "Üstbilgi (Header)", c: "Yer işareti (Bookmark)", d: "SmartArt" }, answer: "b" },
+      { id: 22, category: "Word", question: "Bir tablonun sınır çizgilerini kaldırmak ya da gizlemek için aşağıdaki komutlardan hangisi kullanılır?", options: { a: "Kenarlık Yok (No Border)", b: "Çizgi Yok (No Line)", c: "Çerçeve Yok (No Outline)", d: "Beyaz çizgi (White Line)" }, answer: "a" },
+      { id: 23, category: "Word", question: "Aşağıdaki komutlardan hangisi iki veya daha çok tablo hücresini birleştirip tek hücre haline getirmek için kullanılır?", options: { a: "Hücre Böl (Split Cells)", b: "Otomatik Sığdır (AutoFit)", c: "Tablo Böl (Split Table)", d: "Hücreleri Birleştir (Merge Cells)" }, answer: "d" },
+      { id: 24, category: "Word", question: "Bir Word belgesine eklenmiş olan bir tabloda aşağıdakilerden hangisi uygulanamaz?", options: { a: "Hücre yüksekliği ve genişliğini ayarlamak", b: "Altbilgi eklemek", c: "Yeni satır eklemek", d: "Resim eklemek" }, answer: "b" },
+      { id: 25, category: "Word", question: "Bir Word belgesine eklenen bir resmin metne göre yeri hangi menüden ayarlanır?", options: { a: "Ekle > Resim (Insert > Picture)", b: "Resim Araçları > Metni Kaydır (Picture Tools > Wrap Text)", c: "Giriş > Yasla (Home > Justify)", d: "Çizim Araçları > Şekil Efektleri (Drawing Tools>Shape Effects)" }, answer: "b" },
+      { id: 26, category: "Word", question: "Belge içerisinde, bir sonraki sayfayı metin içerisinde belirli bir konumdan başlatmak için hangi özellik kullanılır?", options: { a: "Dosya > Yeni (File > New)", b: "Referanslar > Dipnot (References > Footnote)", c: "Sayfa Yapısı > Kenarlıklar (Page Layout > Page Borders)", d: "Ekle > Sayfa Sonu (Insert > Page Break)" }, answer: "d" },
+      { id: 27, category: "Word", question: "«Metni Tabloya Dönüştür» («Convert Text to Table») seçeneği aşağıdakilerden hangisi için kullanılır?", options: { a: "Tablo içerisinde hücre yüksekliğini değiştirmek için", b: "Seçilen bir metin grubundan tablo oluşturmak için", c: "Metnin yönünü değiştirmek için", d: "Tablodaki metnin hizalamasını değiştirmek için" }, answer: "b" },
+      { id: 28, category: "Word", question: "Sayfayı dikey durumdan yatay duruma getirmek için aşağıdakilerden hangisi kullanılır?", options: { a: "Sayfa Düzeni > Yönlendirme (Page Layout > Orientation)", b: "Sayfa Düzeni > Kenar Boşlukları (Page Layout > Margins)", c: "Sayfa Düzeni > Boyut (Page Layout > Size)", d: "Sayfa Düzeni > Sütunlar (Page Layout > Columns)" }, answer: "a" },
+      { id: 29, category: "Word", question: "Bir metnin yazı tipi hangi menüden değiştirilir?", options: { a: "Ekle > Metin Kutusu (Insert > Text Box)", b: "Sayfa Düzeni > Metni Kaydır (Page Layout > Wrap Text)", c: "Başvurular > Alıntı (References > Citation)", d: "Giriş > Yazı Tipi (Home > Font)" }, answer: "d" },
+      { id: 30, category: "Word", question: "Belgelerde, açıklama yapmak, yorumda bulunmak veya belgede sözü edilen bir şeye gönderme yapmak amacıyla kullanılan özellik hangisidir?", options: { a: "Üstbilgi (Header)", b: "Dipnot (Footnote)", c: "Başlık notu (Head note)", d: "Altbilgi (Footer)" }, answer: "b" },
+      { id: 31, category: "Word", question: "Dipnot (Footnote) belge içerisinde hangi konumda yer alır?", options: { a: "Belgenin sonunda", b: "Sayfanın sonunda", c: "Başlığın sonunda", d: "Hiçbiri" }, answer: "b" },
+      { id: 32, category: "Word", question: "Varsayılan ayarlarda, Üstbilgi (Header) yada Altbilgi (Footer) hangi sayfada görünür?", options: { a: "Sadece ilk sayfada", b: "Sadece sayfa numarası tek sayı olan sayfalarda", c: "Her sayfada", d: "Sadece son sayfada" }, answer: "c" },
+      { id: 33, category: "Word", question: "Aşağıdakilerden hangisine Kenarlık (Borders) uygulanabilir?", options: { a: "Hücrelere", b: "Metinlere", c: "Paragraflara", d: "Yukarıdakilerin tümüne" }, answer: "d" },
+      { id: 34, category: "Word", question: "Aşağıdakilerden hangisi bir sayfa kenarlığı (Page Border) tipi değildir?", options: { a: "Sağ", b: "Orta", c: "Üst", d: "Sol" }, answer: "b" },
+      { id: 35, category: "Word", question: "Aşağıdakilerden hangisi, Tablo eklerken kullanılan Otomatik Sığdırma (AutoFit) seçeneklerinden değildir?", options: { a: "Sabit Sütun Genişliği (Fixed Column Width)", b: "İçindekilere göre Otomatik Sığdır (AutoFit to Contents)", c: "Sütuna Otomatik Sığdır (AutoFit to Column)", d: "Pencereye Otomatik Sığdır (AutoFit to Window)" }, answer: "c" },
+      { id: 36, category: "Word", question: "Madde İşareti (Bulleting) ve Numaralandırma (Numbering) özellikleri için hangi menü kullanılır?", options: { a: "Dosya > Sayfa Ayarları (File > Page Setup)", b: "Ekle>Madde İşareti/Numaralandırma (Insert>Bullets/Numbering)", c: "Ekle > Sayfa Numaralandırma (Insert > Page Numbers)", d: "Giriş>Madde İşareti/Numaralandırma (Home>Bullets/Numbering)" }, answer: "d" },
+      { id: 37, category: "Word", question: "Dipnot (Footnote) ve Sonnot (Endnote) hakkında aşağıdakilerden hangisi yanlıştır?", options: { a: "Dipnot sayfanın en altında, Sonnot belgenin sonunda yer alır", b: "Dipnotlar Sonnota dönüştürülebilir", c: "Sonnot metinleri değiştirilemez", d: "Dipnot ve Sonnot yazı tipleri değiştirilebilir" }, answer: "c" },
+      { id: 38, category: "Word", question: "Üstbilgi (Header) ve Altbilgi (Footer) hangi amaçla kullanılır?", options: { a: "Büyük belgeleri daha okunaklı hale getirmek için", b: "Bir sayfanın başlangıç ve bitişini işaretlemek için", c: "Dokümanın genel görünümünü geliştirmek için", d: "Belgenin her sayfasında yer almasını istediğimiz bilgileri tek seferde yazabilmek için" }, answer: "d" },
+      { id: 39, category: "Word", question: "Tanımdaki boşluğa doğru kelimeyi yazınız: '................, yazımızda, başka bir yazı veya kişiden bir parça yayınlamak, örnek göstermek, eklemek anlamındadır.'", options: { a: "İçindekiler Tablosu (Table of Contents)", b: "Filigran (Watermark)", c: "Alıntı (Citation)", d: "Köprü (Hyperlink)" }, answer: "c" },
+      { id: 40, category: "Excel", question: "Excel programında hazırlanan dosyaların (çalışma sayfası) uzantısı aşağıdakilerden hangisidir?", options: { a: ".xlsx", b: ".docx", c: ".bmpx", d: ".dotx" }, answer: "a" },
+      { id: 41, category: "Excel", question: "Aşağıdakilerden hangisi 'Hücreleri Biçimlendir (Format Cells)' panosunda yoktur?", options: { a: "Metni kaydırma, hücreleri birleştirme", b: "Metin yönü ayarlama, hizalama", c: "Kenarlıklar, sayı biçimleri", d: "Veri sıralama" }, answer: "d" },
+      { id: 42, category: "Excel", question: "Σ (Sigma) komutu ne için kullanılır?", options: { a: "Ortalama hesaplar", b: "Toplama işlemi yapar", c: "Para birimi yazar", d: "Yazdırma komutudur" }, answer: "b" },
+      { id: 43, category: "Excel", question: "Kenarlık simgelerinin (Kenarlık yok, Alt kenarlık, Sol kenarlık, Sağ kenarlık) sıralanışı aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: { a: "Kenarlık yok – Çerçeve – Kalın çerçeve – Üst ve alt kenarlık", b: "Çift alt kenarlık – Kalın alt kenarlık – Üst ve alt kenarlık – Üst tek alt çift kenarlık", c: "Kenarlık yok – Alt kenarlık – Sol kenarlık – Sağ kenarlık", d: "Üst ve kalın alt kenarlık – Tüm kenarlıklar- Çerçeve – Kalın çerçeve" }, answer: "c" },
+      { id: 44, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de formül olamaz?", options: { a: "=(A1+B1)", b: "A1+B1", c: "=A1+B1", d: "=TOPLA(A1;B1)" }, answer: "b" },
+      { id: 45, category: "Excel", question: "Excel’de A5 neyi temsil eder?", options: { a: "A sütunu – 5. satır", b: "5. satırı – 5. sütun", c: "A satırı – 1. sütun", d: "A satırı – 5. sütunu" }, answer: "a" },
+      { id: 46, category: "Excel", question: "Çalışma alanı, kılavuz çizgileriyle satır ve sütunlara bölünmüştür. Kılavuz çizgilerinin oluşturduğu satır ve sütunların kesişimi ile oluşan bu kutulara ne denir?", options: { a: "Dikey kaydırma çubuğu", b: "Grafik", c: "Aktif çalışma sayfası", d: "Hücre" }, answer: "d" },
+      { id: 47, category: "Excel", question: "Aşağıdakilerden hangisi B8 hücresinin değerini getirir?", options: { a: "=B(8)", b: "=B8", c: "B8$", d: "=8B" }, answer: "b" },
+      { id: 48, category: "Excel", question: "Hücre için aşağıdakilerden hangisi doğrudur?", options: { a: "A-B-C-D şeklinde satırlardır", b: "Sadece açıklama yapmak için kullanılan metin kutusudur", c: "Satır ve sütunların kesiştiği alanlardır", d: "1-2-3-4 şeklinde sütunlardır" }, answer: "c" },
+      { id: 49, category: "Excel", question: "Hücreye girilebilen bilgiler için aşağıdakilerden hangisi yanlıştır?", options: { a: "Menü", b: "Formül/Fonksiyon", c: "Metin", d: "Sayı" }, answer: "a" }
+    ]
+  },
+  "sistem-analizi": {
+    name: "Sistem Analizi ve Tasarımı (84 Soru)",
+    categories: ["Tümü"],
+    questions: [
+      { id: 1, category: "Genel", question: "Bir üniversitede ders seçimi, danışman onayı ve kontenjan kontrolü ayrı yazılımlarda çalışmaktadır. Her biri doğru sonuç üretse de onaylı dersler öğrencinin kesin kaydına geçmemektedir. Öncelikle hangi sorunun incelenmesi gerekir?", options: { a: "Kullanıcıya sunulan ders seçim özetinin daha ayrıntılı hazırlanması", b: "Danışman onayı için belirlenen yetki seviyelerinin yeniden tanımlanması", c: "Her modülün kendi içinde kullandığı alan adlarının standartlaştırılması", d: "Alt sistemler arasındaki veri ve işlem bağlantılarının doğru kurulup kurulmadığı", e: "Kontenjan yönetiminin diğer işlevlerden bağımsız raporlanması" }, answer: "d" },
+      { id: 2, category: "Genel", question: "Kendi performansından haberdar olmayan, geçmişteki eyleminin gelecekteki eylemini etkilemediği ve kendi kontrolünü sağlayacak bir geri besleme mekanizması bulunmayan sistem türü aşağıdakilerden hangisidir?", options: { a: "Kapalı-döngülü sistem", b: "Açık-döngülü sistem", c: "Stokastik sistem", d: "Dinamik sistem", e: "Girdileri sürekli izleyen ancak sonuçları değerlendirmeyen sistem" }, answer: "b" },
+      { id: 3, category: "Genel", question: "Üretim ekranında “120” görülüyor; başka bir ekranda bunun “C hattında bugün üretilen parça sayısı” olduğu belirtiliyor. İkinci ifade hangi dönüşüm sonucunda oluşmuştur?", options: { a: "Bağlamın kaldırılmasıyla sayıların daha güvenilir hâle gelmesi", b: "Sayının bağlam ve anlam kazanmasıyla veriden bilgiye dönüşüm", c: "Ham ölçümün yönetim kararı verilmeden bilgelik aşamasına geçmesi", d: "Anlamlandırılmış sayının doğrudan uzman kuralına dönüşmesi", e: "Ölçümün kullanıcı davranışı değişmeden süreç kontrolüne dönüşmesi" }, answer: "b" },
+      { id: 4, category: "Genel", question: "Kapalı-döngülü sistemlerde, sistem çıktısından elde edilen veriyi arzu edilen standart/kriter ile karşılaştırıp bir sonraki işlem öncesinde düzeltme kararı veren sistem işlevi aşağıdakilerden hangisidir?", options: { a: "Girdi parametresi", b: "Geri besleme (Feedback)", c: "Arayüz dönüştürmesi", d: "Entropi dengesi", e: "Kayıtların yalnızca arşivlenmesi" }, answer: "b" },
+      { id: 5, category: "Genel", question: "Bir mağazada her satış kasa sistemine kaydedilmekte, müdüre ise ürün grubuna göre haftalık kârlılık özeti sunulmaktadır. Bu iki görevi en uygun biçimde hangi sistemler karşılar?", options: { a: "Satış kayıtları için KDS, haftalık özet için VİS", b: "Satış kayıtları için ofis otomasyonu, haftalık özet için YBS", c: "Satış kayıtları için YBS, haftalık kârlılık özeti için VİS", d: "Satış kayıtları için VİS, haftalık yönetim raporu için YBS", e: "Satış kayıtları için VİS, haftalık özet için uzman sistem" }, answer: "d" },
+      { id: 6, category: "Genel", question: "Termodinamik disiplininden sistem teorisine aktarılan; kapalı sistemlerde kaçınılmaz olan ve sistemdeki dengenin bozulması, düzensizlik ve karmaşanın artması sürecine ne ad verilir?", options: { a: "Sinerji", b: "Entropi", c: "Holizm", d: "Emergence", e: "Sistem sınırının genişletilmesi" }, answer: "b" },
+      { id: 7, category: "Genel", question: "Bir yazılım geliştirme ekibinde kullanıcı gereksinimleri netleştirilmeden ekranlar tasarlanıyor, sonradan ortaya çıkan kurallar yüzünden ekranlar tekrar yapılıyor. Yaşam döngüsüne göre esas sorun nedir?", options: { a: "Sistem çalışırken yardım masası kurulmasının önlenmesi", b: "Sistem kullanıldıktan sonra yeni ihtiyacın belirlenmesi", c: "Kodlama bitmeden kullanıcı kabulünün yapılıyor olması", d: "Uygulamaya geçişten önce veri aktarımının planlanması", e: "Analizde belirlenmesi gereken gereksinimlerin tasarımdan önce açıklığa kavuşturulmaması" }, answer: "e" },
+      { id: 8, category: "Genel", question: "İşletmeler gibi açık sistemlerin yok oluşa yönelen entropi sürecini durdurabilmeleri ve yaşamlarını sürdürebilmeleri aşağıdakilerden hangisini kazanmaları ile mümkündür?", options: { a: "Pozitif entropi", b: "Negatif entropi", c: "Azaltmacı yapı", d: "Deterministik denge", e: "Kontrol mekanizmasının tamamen kaldırılması" }, answer: "b" },
+      { id: 9, category: "Genel", question: "Çevrim içi sınav sistemi, geçersiz dosya biçiminde yüklemeyi reddetmiş, gerekçeyi göstermiş ve başarısız denemeyi kaydetmiştir. Bu olayın çıktı bakımından doğru değerlendirmesi hangisidir?", options: { a: "Hata kaydının yalnızca ham girdi olarak tanımlanması", b: "Çıktının yalnızca başarılı dosya yükleme belgesinden ibaret olması", c: "Dosyanın kaydedilmemesi nedeniyle işlem akışının başlamamış kabul edilmesi", d: "Sistem, başarısızlığa rağmen uyarı ve kayıt çıktıları üretmiştir.", e: "Ret mesajının sadece kontrol işlemi sayılıp çıktı kapsamı dışında bırakılması" }, answer: "d" },
+      { id: 10, category: "Genel", question: "İşletme sistemlerinin yaşamını devam ettirmek için kullandığı 7M girdileri arasında aşağıdakilerden hangisi yer almaz?", options: { a: "Man (İnsan) & Material (Malzeme)", b: "Method (Metod) & Machine (Makine)", c: "Money (Para) & Mind (Bilgi)", d: "Marketing (Pazarlama) & Mechanism (Mekanizma)", e: "Money (Para) ve Management (Yönetim)" }, answer: "d" },
+      { id: 11, category: "Genel", question: "Bir hastanede hastanın belirti ve ölçümleri bir araya getirilmiştir. Sistem, uzman tarafından tanımlanan tıbbi protokole dayanarak “ek tetkik istenmeli” önerisi üretmektedir. Bu öneri DIKW içinde hangi düzeye karşılık gelir?", options: { a: "Uzbilgi; ölçümlere kural ve deneyim uygulanmıştır.", b: "Özetleme; vakalardan dönemlik istatistik tablosu çıkarılması", c: "Veri; ölçümlerin tekil değerler halinde saklanması", d: "Bilgelik; etik ilkelerle uzun vadeli tedavi amacı belirlenmesi", e: "Bilgi; bulguların hasta kaydıyla ilişkilendirilip protokol uygulanmadan sunulması" }, answer: "a" },
+      { id: 12, category: "Genel", question: "Bilgi Piramidi'nde yer alan kavramların tabandan tavana doğru doğru sıralanışı aşağıdakilerden hangisidir?", options: { a: "Veri — Bilgi — Uzbilgi — Bilgelik", b: "Bilgi — Veri — Bilgelik — Uzbilgi", c: "Veri — Uzbilgi — Bilgi — Bilgelik", d: "Bilgelik — Uzbilgi — Bilgi — Veri", e: "Bilgi — Veri — Uzbilgi — Bilgelik" }, answer: "a" },
+      { id: 13, category: "Genel", question: "Bir belediye hizmet merkezinin başvuru sayısını sayması ile “personel sayısı yüzde 20 artırılırsa bekleme süresi nasıl değişir?” hesabını yapması farklı işlevlerdir. İkinci görev öncelikle hangi tür sisteme uygundur?", options: { a: "Varsayımlarla alternatif sonuçları karşılaştıran Karar Destek Sistemi", b: "Dönemlik toplam ve hedef sapmalarını raporlayan Yönetim Bilişim Sistemi", c: "Tekil başvuruları kaydeden Veri İşleme Sistemi", d: "Belirli kurallara göre otomatik sınıflama yapan Uzman Sistem", e: "Belge dolaşımı ve takvim akışını sağlayan Ofis Otomasyonu" }, answer: "a" },
+      { id: 14, category: "Genel", question: "Henüz işlenmemiş; semboller, harfler, rakamlar veya işaretlerden oluşan ham gözlem değerlerine ne ad verilir?", options: { a: "Bilgi", b: "Veri (Data)", c: "Uzbilgi", d: "Bilişim", e: "Dönemlik yönetim raporları" }, answer: "b" },
+      { id: 15, category: "Genel", question: "Bir kurumun yeni başvuru sisteminde proje çekirdek ekibi kuruluyor; sorunun sınırı, amaç, kısıtlar ve seçeneklerin yarar/maliyetleri belirlenerek yönetimden devam kararı isteniyor. Bu çalışma hangi aşamaya aittir?", options: { a: "Planlama; projenin başlatılıp başlatılmayacağına dayanak hazırlanır.", b: "Analiz; mevcut sistemi ayrıntılı gözlemleyerek ihtiyaç raporu hazırlanır.", c: "Programlama; modüller hazırlanıp test edilir.", d: "İmplementasyon; veri aktarımı ile kullanıcı kabulü tamamlanır.", e: "Tasarım; veri ve süreç modelleri seçilip teknik çözüm kesinleştirilir." }, answer: "a" },
+      { id: 16, category: "Genel", question: "Ham verilerin belirli bir amaç doğrultusunda işlenmesi, düzenlenmesi ve anlamlı bir yapıya kavuşturularak değer katılması sonucu elde edilen kavram hangisidir?", options: { a: "Veri", b: "Bilgi (Information)", c: "Donanım", d: "Veri tabanı", e: "Uzmanların deneyimiyle oluşturulmuş karar kuralları" }, answer: "b" },
+      { id: 17, category: "Genel", question: "Kütüphane yazılımında “kitap”, “ISBN”, “ödünç verme” ve “iade süresi geçmiş” ifadeleri geçmektedir. Bunların doğru kavramsal sıralaması hangisidir?", options: { a: "Öğe – özellik – faaliyet – durum", b: "Durum – özellik – faaliyet – öğe", c: "Öğe – durum – faaliyet – özellik", d: "Öğe – faaliyet – özellik – durum", e: "Özellik – öğe – faaliyet – durum" }, answer: "a" },
+      { id: 18, category: "Genel", question: "Veri ve bilginin ötesinde; uygulama, deneyim ve sezgilerle pekişmiş, neyin doğru veya yanlış olduğunu söyleyen ve karar vermeyi yönlendiren kavram hangisidir?", options: { a: "Uzbilgi (Knowledge)", b: "Veri elemanı", c: "Rapor", d: "Yazılım", e: "Ham kayıtların tutulduğu işlem günlüğü" }, answer: "a" },
+      { id: 19, category: "Genel", question: "Bir sağlık kurumunda iki tedavi seçeneği klinik açıdan benzer sonuçlar üretmektedir. Yönetim, hasta haklarını, uzun dönem etkileri ve kurumun değerlerini de dikkate alarak karar vermektedir. DIKW bakımından öne çıkan aşama hangisidir?", options: { a: "Bilgi; klinik bulguların hasta kaydıyla ilişkilendirilmesi", b: "Bilgelik; etik değerler ve amaçlar da değerlendirmeye katılmıştır.", c: "Özetleme; klinik sonuçların tek bir raporda birleştirilmesi", d: "Uzbilgi; protokolün sonuç üretmek için doğrudan uygulanması", e: "Veri; hastaların yalnızca tekil ölçümlerinin toplanması" }, answer: "b" },
+      { id: 20, category: "Genel", question: "Bir bilginin 'yönetimsel bir değer' taşıyabilmesi için sahip olması gereken temel özellikler arasında aşağıdakilerden hangisi sayılamaz?", options: { a: "Doğru ve güncel olması", b: "İstenilen zamanda kolayca ulaşılabilir olması", c: "Sınırsız miktarda ve karmakarışık sunulması", d: "Anlaşılır, öz ve eksiksiz olması", e: "Karar vericinin amacına göre özetlenmesi" }, answer: "c" },
+      { id: 21, category: "Genel", question: "Bir hastanenin uzmandan aldığı “EĞER belirtiler A ve B ise öncelikle C testini öner” kurallarını çalıştıran uygulaması vardır. Kararın oluşmasında belirleyici bileşen hangisidir?", options: { a: "Uzmanın kural tanımlarını saklayan uzbilgi tabanı", b: "Verilerin dönemsel toplamlarını üreten raporlama bileşeni", c: "Çıkan sonucu kullanıcıya aktaran arayüz", d: "Uzbilgi tabanındaki kuralları işleten çıkarım mekanizması", e: "Farklı alternatiflerin maliyetlerini karşılaştıran model bileşeni" }, answer: "d" },
+      { id: 22, category: "Genel", question: "Yönetim piramidinin en üstünde yer alan Stratejik Planlama kademesindeki yöneticilerin kararlarında öncelikli olarak ihtiyaç duyduğu bilgi türü hangisidir?", options: { a: "Ayrıntılı bilgi", b: "Öz bilgi (Özet bilgi)", c: "Rutin işlem bilgisi", d: "Teknik uygulama bilgisi", e: "Uzun dönemli kararları yalnızca tekil işlem fişlerine dayandırma" }, answer: "b" },
+      { id: 23, category: "Genel", question: "Bir sistemin sorunları ve kullanıcı ihtiyaçları belgelenmiş; şimdi yeni sistemde hangi veri yapısının, işlem akışının ve teknolojik çözümün kullanılacağı kararlaştırılmaktadır. Hangi aşamada bulunulmaktadır?", options: { a: "Tasarım", b: "Analiz", c: "İmplementasyon", d: "Planlama", e: "Kullanım ve izleme" }, answer: "a" },
+      { id: 24, category: "Genel", question: "Yönetim piramidinde aşağıdan yukarıya doğru çıkıldıkça bilgi kaynaklarının kullanım eğilimi nasıl değişmektedir?", options: { a: "İç kaynaklı bilgi kullanımı artar.", b: "Dış kaynaklı ve çevre odaklı bilgi kullanımı artar.", c: "Ayrıntılı bilgiye ihtiyaç artar.", d: "Bilgi ihtiyacı tamamen ortadan kalkar.", e: "Kararların yalnızca geçmiş işlem kayıtlarıyla sınırlandırılması" }, answer: "b" },
+      { id: 25, category: "Genel", question: "İki depo soğutma cihazından ilki her gün saat 18.00’de sabit süre çalışmaktadır. İkincisi ölçülen sıcaklık hedefi aştığında çalışıp hedefe gelince durmaktadır. İkinci cihazı ayırt eden temel özellik nedir?", options: { a: "Sıcaklığı ölçerek sonucu kaydetmesi fakat çalışma düzenini sabit tutması", b: "Soğutmayı düzenleyen kararın yalnızca kullanıcı tarafından elle verilmesi", c: "Çalışma süresinin önceden tanımlanmış tek bir süreye bağlı olması", d: "Belirlenmiş saat geldiğinde ölçümden bağımsız çalışması", e: "Çıktıyla ilgili ölçümü kullanarak sonraki çalışmasını değiştirmesi" }, answer: "e" },
+      { id: 26, category: "Genel", question: "Yönetim piramidinin en alt seviyesinde yer alan Operasyonel Kontrol (Alt Yönetim) kademesinin temel odak noktası aşağıdakilerden hangisidir?", options: { a: "5-10 yıllık stratejik planlama yapma", b: "Günlük rutin işlerin denetimi ve ayrıntılı iç kaynaklı bilgi kullanımı", c: "Şirket birleşme kararları alma", d: "Dış çevre tehditlerini analiz etme", e: "Yeni pazarlara giriş için beş yıllık strateji geliştirilmesi" }, answer: "b" },
+      { id: 27, category: "Genel", question: "Bir banka kredi ekranında müşterinin doğrulanmış aylık geliri 54.000 TL iken 5.400 TL kaydedilmiştir. Hesaplama aracı düzgün çalışsa da kredi reddedilmiştir. Öncelikle hangi sorun düzeltilmelidir?", options: { a: "Bilgiye yalnızca yetkili kişilerin erişip erişemediği", b: "Verinin elde edilme maliyetinin sağladığı yararı aşıp aşmadığı", c: "Raporda gereksiz ayrıntı bulunup bulunmadığı", d: "Girdi verisinin doğruluğu; yanlış girdi yanlış karara yol açmıştır.", e: "Verilerin karar zamanında yeterince güncel olup olmadığı" }, answer: "d" },
+      { id: 28, category: "Genel", question: "Sanayi toplumundan Bilişim Toplumuna geçişte sosyo-ekonomik yapıda meydana gelen temel değişim aşağıdakilerden hangisidir?", options: { a: "Maddi sermaye ve beden gücünün ön plana çıkması", b: "Bilgi üretimi ve beşeri sermayenin temel üretken güç haline gelmesi", c: "Bilişim teknolojilerinin kullanımının azalması", d: "Kol gücüne dayalı imalatın tek odak olması", e: "İşletmelerin bilgi alışverişinden tamamen vazgeçmesi" }, answer: "b" },
+      { id: 29, category: "Genel", question: "Bir bankada sistem, üç farklı kredi politikasının geri ödeme riski üzerindeki etkisini hesaplıyor; son kararı kredi komitesi veriyor. Bu kullanımın doğru yorumu hangisidir?", options: { a: "KDS yalnızca günlük para yatırma kayıtlarını tutar.", b: "Komite karar verdiğinden sistemde bilgi veya model kullanılmamıştır.", c: "KDS seçeneklerin sonuçlarını görünür kılar; karar yetkisi yönetimde kalır.", d: "KDS bütün yönetsel yargıları kaldırıp komitenin yerine geçer.", e: "Sistem hiçbir modele ihtiyaç duymadan uzman kararını zorunlu üretir." }, answer: "c" },
+      { id: 30, category: "Genel", question: "McLeod'un bilgisayara dayalı bilişim sistemleri (BDBS) sınıflandırmasında yer alan ve işletme dışına (müşteriler, satıcılar vb.) veri sağlama yükümlülüğü bulunan tek alt sistem hangisidir?", options: { a: "Yönetim Bilişim Sistemleri (YBS)", b: "Karar Destek Sistemleri (KDS)", c: "Veri İşleme Sistemi (TPS)", d: "Uzman Sistemler", e: "Ofis Otomasyon Sistemi (OAS)" }, answer: "c" },
+      { id: 31, category: "Genel", question: "Bir hastane bilgi sistemi test ortamında çalışmaktadır. Hasta kayıtları eski sistemden yeni sisteme taşınmakta, personele eğitim verilmektedir ve kullanıcı kabulü yapılmaktadır. Bu görevler hangi aşamanın göstergesidir?", options: { a: "Yalnızca mevcut sistemin incelendiği analiz", b: "Canlı kullanım sonrası bakım taleplerinin izlendiği dönem", c: "Yeni arayüzün çizildiği tasarım", d: "İmplementasyon (uygulamaya geçiş)", e: "İhtiyaçların ilk kez tanımlandığı planlama" }, answer: "d" },
+      { id: 32, category: "Genel", question: "Organizasyondaki her yöneticiye kendi sorumluluk alanında karar almak, plan yapmak ve kontrol etmek için ihtiyaç duyduğu özet bilgiyi sağlayan sistem hangisidir?", options: { a: "Yönetim Bilişim Sistemleri (YBS / MIS)", b: "Ofis Otomasyonu", c: "İşlem Tablosu", d: "Veri İşleme Sistemi", e: "Uzman Sistemler (US)" }, answer: "a" },
+      { id: 33, category: "Genel", question: "Bir işletme hem tedarikçi ve müşterileriyle bilgi alışverişi yapıyor hem de kalite sonuçlarına göre üretim ayarlarını değiştiriyor. Bu iki durum sırasıyla hangi farklı özelliği gösterir?", options: { a: "Çevreyle etkileşmeyen sistem ve açık döngülü kontrol", b: "Çevreyle etkileşen sistem ve geri beslemesiz kontrol", c: "Çevreyle etkileşmeyen sistem ve geri beslemeli kontrol", d: "Statik sistem modeli ve kontrol verisi kullanmayan işlem", e: "Açık sistem olma ve geri beslemeli kontrol kullanma" }, answer: "e" },
+      { id: 34, category: "Genel", question: "Yapısal olmayan veya yarı-yapısal doğaya sahip karmaşık problemleri çözmede, veri tabanındaki veriler ile matematiksel modelleri birleştirerek karar vericiye yardımcı olan etkileşimli sistem hangisidir?", options: { a: "Veri İşleme Sistemi", b: "Karar Destek Sistemi (KDS / DSS)", c: "Kelime İşlemci", d: "Muhasebe Paket Programı", e: "Ofis Otomasyon Sistemi (OAS)" }, answer: "b" },
+      { id: 35, category: "Genel", question: "Bir lojistik müdürü karar vermek için dakikalık konum verisi istemektedir; hazırlanan rapor tüm bilgileri doğru içermesine karşın her akşam gönderilmektedir. Asıl sorun hangi bilgi niteliğindedir?", options: { a: "Veriye sadece yetkili kişilerin erişmesi", b: "Verinin doğru kaynak tarafından üretilmesi", c: "Veri toplama maliyetinin azaltılması", d: "Raporda yalnızca gereken göstergelerin yer alması", e: "Zamanında sağlanma ve güncellik" }, answer: "e" },
+      { id: 36, category: "Genel", question: "Herbert Simon'a göre problem çözme ve karar verme süreci hangi 4 aşamadan oluşmaktadır?", options: { a: "Planlama — Kodlama — Test — Teslim", b: "Araştırma (Intelligence) — Tasarım (Design) — Seçim (Choice) — Gözden Geçirme (Review)", c: "Girdi — Süreç — Çıktı — Kontrol", d: "Veri — Bilgi — Uzbilgi — Bilgelik", e: "Veri Toplama — Test — Arşivleme — Sistem Kapatma" }, answer: "b" },
+      { id: 37, category: "Genel", question: "Bir e-ticaret firması yeni bir ERP satın almıştır. Sipariş, stok ve muhasebe bölümleri ayrı kayıt tuttuğundan veriler çelişmektedir. Sistemin hedeflenen yararı üretmemesinin temel nedeni nedir?", options: { a: "Hazır paketin tüm süreçler için otomatik olarak uygun kabul edilmesi", b: "Ortak veri tanımları bulunmadan kullanıcı eğitimine ağırlık verilmesi", c: "Sistem verilerinin her işlevde yeniden bağımsız olarak girilmesi", d: "Ortak veri ve süreç bütünleşmesinin kurulmamış olması", e: "İş akışları birbirine bağlanmadan yalnızca rapor görünümünün yenilenmesi" }, answer: "d" },
+      { id: 38, category: "Genel", question: "Gory ve Scott-Morton'ın KDS Matrisinde; 'Yeni fabrika kurma' veya 'Yeni ürün planlama' kararları hangi yönetim seviyesi ve karar yapısı kesişiminde yer alır?", options: { a: "Operasyonel — Yapısal", b: "Stratejik — Yarı-yapısal", c: "Yönetimsel — Yapısal", d: "Operasyonel — Yapısal olmayan", e: "Operasyonel — Yarı-yapısal" }, answer: "b" },
+      { id: 39, category: "Genel", question: "Bir üniversitenin öğrenci sistemi kullanıma açılmıştır. Kullanıcılar yardım masasına sorun bildirmekte ve yeni ihtiyaçlar için iyileştirme talepleri toplanmaktadır. Döngünün hangi aşamasına örnektir?", options: { a: "Çekirdek ekibin kurulduğu planlama", b: "Yeni sistem şemasının hazırlandığı tasarım", c: "Kullanım ve izleme", d: "Sadece modüllerin yazıldığı programlama", e: "Sistem teklifinin ilk kez yazıldığı başlangıç" }, answer: "c" },
+      { id: 40, category: "Genel", question: "Turban'ın kavramsal Karar Destek Sistemi modelinde; uç kullanıcı ile diğer sistem bileşenleri arasındaki iletişimi kuran arayüz yazılımına ne ad verilir?", options: { a: "Veri yöneticisi", b: "Model yöneticisi", c: "Diyalog yöneticisi", d: "Çıkarsama makinesi", e: "İşlem kayıt yöneticisi" }, answer: "c" },
+      { id: 41, category: "Genel", question: "Bir kargo uygulamasında yalnızca “paket teslim edildi” bilgisini saklama seçeneği düşünülmektedir. Oysa kullanıcıya gecikmenin kaynağını açıklama hedefi vardır. Sistemin kapsamı açısından en yerinde karar hangisidir?", options: { a: "Analizi yalnızca müşterinin gördüğü teslim ekranıyla sınırlamak", b: "Mevcut olay kayıtlarını incelemeden yeni rapor türlerini zorunlu tutmak", c: "Gecikmeleri yalnızca teslim personelinin açıklamasıyla belirlemek", d: "Sistem sınırını gecikme analizinden bağımsız biçimde tüm kurumsal süreçleri içerecek kadar genişletmek", e: "Gecikmeyi açıklamak için gereken takip olayları ile işlem kurallarını da kapsamda değerlendirmek" }, answer: "e" },
+      { id: 42, category: "Genel", question: "Uzman kişilerin bilgi ve tecrübelerini depolayarak belirli bir alandaki zor problemleri çözmede insan düşünce sistemini taklit eden yapay zeka alt sistemi hangisidir?", options: { a: "Uzman Sistemler (Expert Systems)", b: "Veri İşleme Sistemi", c: "Ofis Otomasyonu", d: "İş İstasyonu", e: "İstemci–sunucu ağ sistemi" }, answer: "a" },
+      { id: 43, category: "Genel", question: "Bir yönetici çok sayıda çalışanın tekil mesai kayıtlarını değil, departman başına aylık fazla mesai toplamı ve hedef sapmasını istemektedir. Hangi işlem yönetim ihtiyacını doğrudan karşılar?", options: { a: "Kayıtların saklama alanının büyütülüp analiz yapılmaması", b: "Her çalışan için ayrı ayrıntı raporu hazırlanıp toplamların çıkarılmaması", c: "Kayıtların ilgili ölçütlere göre özetlenmesi ve karşılaştırmalı raporlanması", d: "Kayıtların yalnızca kaydedildikleri kronolojiye göre sunulması", e: "Kayıtların sadece departman adına göre sınıflandırılması" }, answer: "c" },
+      { id: 44, category: "Genel", question: "Uzman sistemin 'beyni' sayılan; uzbilgi tabanındaki kural ve gerçekleri yorumlayarak mantık yürüten ve sonuca ulaşan bileşen hangisidir?", options: { a: "Kara tahta (İşyeri)", b: "Çıkarsama Makinesi (Inference Engine)", c: "Kullanıcı Arayüzü", d: "Veri Sözlüğü", e: "Veri madenciliği aracı" }, answer: "b" },
+      { id: 45, category: "Genel", question: "Bir şirket iş akışında satınalma talebi önce birim amirine, sonra bütçe sorumlusuna gönderiliyor ve her onay zamanı saklanıyor. Bu ihtiyacı en doğrudan karşılayan uygulama hangisidir?", options: { a: "Şehir haritasındaki güzergâhları hesaplayan coğrafi sistem", b: "Elektronik belge ve onay akışı sağlayan ofis otomasyonu", c: "Sadece barkod hareketini kayıt altına alan satış terminali", d: "Hastalık teşhisine özel kural tabanlı uzman sistem", e: "Fabrika yerini matematiksel modelle seçen karar destek sistemi" }, answer: "b" },
+      { id: 46, category: "Genel", question: "Doküman hazırlama, elektronik posta, takvim yönetimi ve dosya paylaşımı gibi büro içi üretkenliği ve iletişimi artırmayı hedefleyen sistem türü hangisidir?", options: { a: "Ofis Otomasyon Sistemleri (OAS)", b: "Üst Yönetim Destek Sistemi", c: "Ağırlıklı Sıralama Analizi", d: "Veri Ambarı", e: "Kurumsal kaynak planlama sistemi" }, answer: "a" },
+      { id: 47, category: "Genel", question: "Bir yazılım projesinde ekibin her üyesi işini zamanında yapmasına rağmen gerekli belgeyi kimin hazırlayacağı, kontrolleri kimin onaylayacağı belirsizdir. Hangi uygulama sorunu doğrudan azaltır?", options: { a: "Yalnızca yazılım geliştiricilerin iş sırasını belirlediği bir plan", b: "Kullanıcıdan bağımsız yürütülen ve ara kontrolleri azaltan proje akışı", c: "Proje yöneticisinin belgeleri tek başına hazırladığı merkezi işleyiş", d: "Faaliyet, sorumlu, standart belge ve teknikleri tanımlayan ortak metodoloji", e: "Sorumlular belli olsa bile belge teslim noktalarının tanımlanmadığı çalışma" }, answer: "d" },
+      { id: 48, category: "Genel", question: "Bilişim Teknolojisinin (BT) altyapısını oluşturan ana unsurlar arasında aşağıdakilerden hangisi yer almaz?", options: { a: "Teknik mimari (Donanım, Yazılım, Ağlar)", b: "Uygulama geliştirme metodolojileri ve araçları", c: "Bilişim uzmanları ve yönetim yapısı", d: "Üretim bandındaki ham kauçuk stoğu", e: "Kurumsal ağ altyapısı ve güvenlik bileşenleri" }, answer: "d" },
+      { id: 49, category: "Genel", question: "Bir teknisyen iş yerindeki bakım taleplerinin neden geç sonuçlandığını araştırırken önce tüm gecikmeleri yazılımın yavaşlığına bağlıyor. Sistem yaklaşımıyla en uygun sonraki adım hangisidir?", options: { a: "Yazılım hızını ilk çözüm kabul edip iş akışını ikinci sıraya bırakmak", b: "İş talebinin kayıt, yönlendirme, malzeme temini ve onay bağlantılarını birlikte incelemek", c: "Gecikmeleri kullanıcı davranışlarıyla açıklayıp onay zincirini ayrı tutmak", d: "Önce arayüzleri yenileyip süreç verilerini daha sonra toplamak", e: "Bakım raporlarının biçimine odaklanıp görev aktarımını kapsam dışı bırakmak" }, answer: "b" },
+      { id: 50, category: "Genel", question: "Bilgisayar donanım mimarisinde yer alan 'Merkezi İşlem Birimi (MİB / CPU)' hangi 3 temel alt birimden oluşur?", options: { a: "Aritmetik Mantık Birimi — Bellek Birimi — Merkezi Kontrol Birimi", b: "Klavye — Ekran — Yazıcı", c: "Sabit Disk — Disket — CD-ROM", d: "İstemci — Sunucu — Ağ", e: "Sunucu — İstemci — Ağ" }, answer: "a" },
+      { id: 51, category: "Genel", question: "Bir işletmede operasyon yöneticisi günlük teslimat sapmalarını, genel müdür ise sonraki üç yılın pazar büyümesi olasılıklarını izlemektedir. Farkı en iyi açıklayan ifade hangisidir?", options: { a: "Operasyon yöneticisi işletmenin hiçbir iç verisini kullanmaz.", b: "Yönetim seviyesi, bilginin ayrıntı düzeyi ile zaman ufkunu değiştirir.", c: "Stratejik kararlar geçmiş ve geleceğe ilişkin özet bilgi gerektirmez.", d: "Üst yönetim yalnızca günlük işlem fişleri üzerinden karar verir.", e: "Yönetimin tüm seviyelerinde aynı veri derinliği yeterlidir." }, answer: "b" },
+      { id: 52, category: "Genel", question: "Büyük veri yığınları içerisinden gizli, anlamlı ve kullanılabilir bilgi ve kalıpların keşfedilmesi sürecine ne ad verilir?", options: { a: "Veri İşleme", b: "Veri Madenciliği (Data Mining)", c: "Normalizasyon", d: "Veri Girişi", e: "Ofis otomasyonu" }, answer: "b" },
+      { id: 53, category: "Genel", question: "Bir yönetici, yeni depo yeri için maliyet ve ulaşım alternatiflerini KDS’de değerlendiriyor. Veri kaynakları doğru olduğu hâlde matematiksel hesaplama modeli hatalı sonuç veriyor. Öncelikle hangi bileşen incelenmelidir?", options: { a: "Yalnızca yazıların biçimini değiştiren kelime işlemci", b: "Alternatiflerin hesaplandığı model yönetimi bileşeni", c: "Belge dolaşımını yöneten elektronik takvim", d: "İşlemlerin kaydedildiği kasa terminali", e: "Depo çevresindeki bilgisayarların fiziksel kablo rengi" }, answer: "b" },
+      { id: 54, category: "Genel", question: "Bir işin sistematik olarak 'ne, kim, nasıl ve hangi araçlarla' yapılacağının belirlenmesi sürecine ve sistem geliştirmede izlenen ilkelere ne ad verilir?", options: { a: "Metodoloji (Yöntembilim)", b: "Kodlama", c: "Benchmarking", d: "Simülasyon", e: "Günlük satış verisi" }, answer: "a" },
+      { id: 55, category: "Genel", question: "Bir proje yöneticisi CASE aracı satın aldığı için artık geliştirme metodolojisine ihtiyacı kalmadığını savunuyor. Bu düşüncedeki hata nedir?", options: { a: "CASE araçlarının yalnızca son kullanıcı desteğinde kullanılabileceği düşüncesi", b: "CASE araçları yöntem ve belgelendirmeyi destekler, metodolojinin yerine geçmez.", c: "Belgelendirme standartlarının proje sorumlularını belirlemek için yeterli olduğu düşüncesi", d: "Sistem geliştirme aşamalarının seçiminin tümüyle araç tarafından yapılabileceği düşüncesi", e: "Metodolojinin sadece programlama dilinin belirlenmesinden oluştuğu düşüncesi" }, answer: "b" },
+      { id: 56, category: "Genel", question: "Sistem analistlerin, yazılım mühendislerinin ve kullanıcıların iş sorunlarını çözmek amacıyla izlediği mantıksal sürece 'Sistem Geliştirme Yaşam Döngüsü (SGYD)' denir. Ders kapsamında ele alınan SGYD sırasıyla hangi 6 aşamadan oluşur?", options: { a: "Araştırma — Bütçeleme — Modelleme — Kodlama — Test — Teslim", b: "Planlama — Analiz — Tasarım — Programlama — İmplementasyon — Kullanım ve İzleme", c: "Problemin Tanımı — Veri Toplama — Tasarım — Test — Uygulama — Değerlendirme", d: "Strateji — Tasarım — Kodlama — Dönüştürme — Bakım — Güncelleme", e: "Planlama — Tasarım — Analiz — Kullanım — Programlama — İmplementasyon" }, answer: "b" },
+      { id: 57, category: "Genel", question: "Üniversite kayıt sistemi için bir ekip kod yazmadan önce “kimler ders seçebilir, hangi ön koşullar denetlenir, hata durumunda ne olur?” sorularını yanıtlamaktadır. Bu çalışmanın ana gerekçesi hangisidir?", options: { a: "Kullanıcı rollerini yazılım geliştirme tamamlanınca belirlemek", b: "Kullanıcı ihtiyaçlarını sonraki kabul testinde ilk kez belirlemek", c: "Sistemin yapması gerekenleri ve iş kurallarını kodlamadan önce açıklaştırmak", d: "Analiz tamamlanmadan yeni sistemin ekran düzenini kesinleştirmek", e: "Mevcut kayıtları dikkate almadan yalnızca teknik mimariyi tanımlamak" }, answer: "c" },
+      { id: 58, category: "Genel", question: "Sistem Geliştirme Yaşam Döngüsünün planlama aşamasında, proje seçeneklerinin uygulanabilirliğini ve beklenen fayda-maliyet dengesini değerlendiren çalışma aşağıdakilerden hangisidir?", options: { a: "Olurluluk (Fizibilite) Çalışması", b: "Kod İncelemesi", c: "Birim Testi", d: "Veri Akış Diyagramı", e: "Kullanıcı kabul testi" }, answer: "a" },
+      { id: 59, category: "Genel", question: "Bir kurumda sunucular, ağ ve veri güvenliği iyi yönetildiği hâlde kritik deneyimler çalışanların ayrılmasıyla kaybolmaktadır. Hangi sorumluluğun güçlendirilmesi bu eksikliğe doğrudan yöneliktir?", options: { a: "Aylık performans raporlarını oluşturan YBS işlevi", b: "Donanım, sunucu ve siber güvenlik yatırımlarını planlayan CIO işlevi", c: "Kurumsal bilgi birikimini, paylaşımını ve aktarımını yöneten CKO işlevi", d: "Günlük işlem verilerini kaydedip işleyen VİS işlevi", e: "Evrak ve takvim koordinasyonunu sağlayan ofis otomasyonu" }, answer: "c" },
+      { id: 60, category: "Genel", question: "SGYD'nin Analiz Aşamasında hazırlanan ve varolan sistemin sorunlarını, bilgi ihtiyaçlarını ve detaylı gereksinimlerini içeren temel rapor hangisidir?", options: { a: "Sistem Teklifi Raporu", b: "İhtiyaç Analizi Raporu", c: "İşletim Kılavuzu", d: "Test Spesifikasyonu", e: "Kullanım dönemi yardım masası kaydı" }, answer: "b" },
+      { id: 61, category: "Genel", question: "Bir sistem analisti, müşteri kayıtlarının düzensiz olduğu büyük problemi “satış, stok, finans ve lojistik” süreçlerine ayırıp her birini inceliyor. Bu yöntem hangi yaklaşımın uygulamasıdır?", options: { a: "Ham verilerden tekil gözlemlere dayanarak genelleme çıkarma", b: "İhtiyaçları tanımlamadan çözümü doğrudan programlama aşamasına geçirme", c: "Karmaşık sorunu yönetilebilir parçalara ayıran analitik yaklaşım", d: "Farklı iş süreçlerinin birbirleriyle ilişkisini görmezden gelme", e: "Mevcut kayıtları incelemeden yalnızca yazılım ekranlarını yenileme" }, answer: "c" },
+      { id: 62, category: "Genel", question: "Tasarım aşamasında ortaya konan mantıksal modellerin ve program spesifikasyonlarının belirlenen bir programlama dilinde kodlanarak çalışır hale getirildiği aşama hangisidir?", options: { a: "Planlama Aşaması", b: "Analiz Aşaması", c: "Programlama Aşaması", d: "İzleme Aşaması", e: "Kullanıcılara canlı ortamda eğitim verilmesi" }, answer: "c" },
+      { id: 63, category: "Genel", question: "Bir kurumda sistemin ilk kullanımında gerekli eğitim verilmeden canlı geçiş yapılmış ve kullanıcılar kritik kayıtları yanlış girmiştir. En iyi önleyici tedbir hangisidir?", options: { a: "Kullanıcının sürece uyumunu ölçmeden sistemi kabul edilmiş saymak", b: "Veri aktarımını tamamlayıp iş akışı denetimini sonraya bırakmak", c: "Canlı geçiş öncesi kullanıcı eğitimi ve kabul testinin planlanıp tamamlanması", d: "Kullanıcı kabulünü canlı kullanım sonrasına bırakmak", e: "Eğitimin yerini yalnızca teknik testlerin alacağını varsaymak" }, answer: "c" },
+      { id: 64, category: "Genel", question: "Geliştirilen bilişim sisteminin uç-kullanıcı eğitimlerinin verilmesi, sistem kabul testlerinin yapılması ve canlı işletim ortamına geçirilmesi işlemleri hangi aşamada gerçekleşir?", options: { a: "İmplementasyon (Uygulamaya Geçiş) Aşaması", b: "Planlama Aşaması", c: "Analiz Aşaması", d: "Tasarım Aşaması", e: "Alternatif proje tekliflerinin ön değerlendirmesi" }, answer: "a" },
+      { id: 65, category: "Genel", question: "Bir müşteri hizmetleri sisteminde işlem süresi hedefi 2 dakikadır. Ölçülen ortalama 4 dakika çıkmasına rağmen süreçte hiçbir değişiklik yapılmamaktadır. Geri beslemeli yönetim için hangi ek adım gerekir?", options: { a: "Ölçüm ile hedefi karşılaştırıp gecikme nedenlerine göre süreçte düzeltme yapmak", b: "Başlangıçta belirlenmiş işlem sırasını performans verisine rağmen sabit tutmak", c: "Hedef değişikliğini neden analizi yapmadan ilk çözüm kabul etmek", d: "Yalnızca günlük işlem sayısını izleyip süre sapmasını dışarıda bırakmak", e: "Ölçümü raporlayıp karar alınmasını bir sonraki döneme bırakmak" }, answer: "a" },
+      { id: 66, category: "Genel", question: "Bilişim ekibinde yer alan ve varolan sistemin sorunlarını ve bilgi ihtiyaçlarını analiz ederek iş gereksinimlerini belirleyen anahtar uzman kimdir?", options: { a: "Veritabanı Uzmanı", b: "Sistem Analisti", c: "Sistem Programcısı", d: "Ağ Operatörü", e: "Proje sponsoru" }, answer: "b" },
+      { id: 67, category: "Genel", question: "Bir perakende firması binlerce fişi tarayarak “X ürününü alanların önemli bölümü Y ürününü de alıyor” sonucuna ulaşmaktadır. Bu çıkarımın mantığı hangisidir?", options: { a: "Çıkarılan kuralı hiçbir örnekle sınamadan kesin koşul kabul etme", b: "Genel bir satınalma kuralını her tekil işleme uygulayan tümdengelim", c: "Özel gözlemleri bağlamsız biçimde kaydetme ve arşivleme", d: "Veri kayıtlarından yalnızca dönemsel toplam üretme", e: "Tekil gözlemlerden genel örüntüye ulaşan tümevarım" }, answer: "e" },
+      { id: 68, category: "Genel", question: "Sistem analisti tarafından ortaya konulan iş gereksinimlerini süreçsel, teknolojik ve organizasyonel çözümlere dönüştürerek belgelendiren bilişim uzmanı kimdir?", options: { a: "Sistem Tasarımcısı", b: "Sistem Programcısı", c: "Veri Giriş Elemanı", d: "Donanım Teknisyeni", e: "Sistem operatörü" }, answer: "a" },
+      { id: 69, category: "Genel", question: "Bir lojistik şirketi müşteri adresleriyle yol ağını, anlık trafik yoğunluğunu ve araç konumunu birleştirerek rota belirlemektedir. Karar sürecini ayırt eden teknoloji hangisidir?", options: { a: "Önceden tanımlanmış arıza kurallarından teknik öneri üreten uzman sistem", b: "Teslimat sonuçlarını aylık raporlayan yönetim bilişim sistemi", c: "Sürücülerin görev çizelgelerini eşzamanlayan ofis otomasyonu", d: "Adres ve telefonları kayıt altına alan veri işleme sistemi", e: "Coğrafi bilgi sistemiyle konumsal verinin analiz edilmesi" }, answer: "e" },
+      { id: 70, category: "Genel", question: "Bir işletmenin bilişim bölümünde sunucular günceldir; fakat sık hizmet kesintisi yaşanıyor ve kullanıcı taleplerinin çözüm süresi uzuyor. Bölümün başarısını değerlendirmek için hangi yaklaşım uygundur?", options: { a: "Hizmet kesintilerini bütçe rakamlarından bağımsız tutmak", b: "Kullanıcı beklentilerini süreç performansından ayrı değerlendirmek", c: "Teknik kaynaklarla birlikte kullanıcıya sunulan hizmetin sonuçlarını ölçmek", d: "Başarıyı yalnızca donanımın güncelliği ile değerlendirmek", e: "Hata oranları yerine yalnızca satınalma maliyetini esas almak" }, answer: "c" },
+      { id: 71, category: "Genel", question: "Bir belediye, otobüs gecikmelerini yalnızca mobil uygulamanın gösterdiği saatlerden çözmeye çalışıyor. Aracın konumu, yol durumu ve durak verisi incelenmiyor. Bu yaklaşımda hangi hata belirgindir?", options: { a: "Çıktıyı etkileyen temel girdiler ve ilişkiler analiz dışı bırakılmaktadır.", b: "Sistem sınırı ilgili tüm dış koşulları eksiksiz içermektedir.", c: "Girdi verileri doğru olduğundan süreç bağlantılarını incelemek gerekmemektedir.", d: "Veri toplama ile süreç değerlendirmesi eş zamanlı yürütülmektedir.", e: "Temel sorun yalnızca kullanıcının ekran verisini yanlış yorumlamasıdır." }, answer: "a" },
+      { id: 72, category: "Genel", question: "Bir kuruluş müşteri bilgilerindeki hataları önlemek için kimlik numarasının 11 haneli olup olmadığını girişte denetliyor. Veriyi işleme zincirinde bu uygulamanın görevi hangisidir?", options: { a: "Kayıt biçimiyle ilgili alanları denetleyen veri doğrulama", b: "Müşterileri benzer özelliklerine göre sınıflandırma", c: "Veri doğrulama; kabul edilmeden önce kurala uygunluğu kontrol etme", d: "Dönemsel toplamları kullanıcıya gösterme", e: "Siparişleri tarih sırasına göre dizme" }, answer: "c" },
+      { id: 73, category: "Genel", question: "İki tedarikçi arasında sürekli tekrarlanan sipariş ve irsaliye bilgileri, personel yeniden girmeden, standart biçimde iki şirketin uygulamaları arasında aktarılıyor. Hangi teknoloji tanımlanmıştır?", options: { a: "Sipariş belgelerini e-posta eki olarak gönderip karşı tarafta elle yeniden girmek", b: "İşletmenin kendi içindeki onayları elektronik iş akışıyla yürütmek", c: "Geçmiş sipariş verilerinden satınalma örüntüleri keşfetmek", d: "Siparişleri iki işletme arasında standart yapısal biçim yerine taranmış belgeyle iletmek", e: "Elektronik Veri Değişimi (EDI)" }, answer: "e" },
+      { id: 74, category: "Genel", question: "Bir şirket yeni bir bilişim çözümünü yalnızca en ucuz lisansı sunduğu için seçiyor. Kullanıcı eğitimi, veri dönüşümü ve mevcut süreçlerle uyum değerlendirilmemiştir. Hangi risk ön plandadır?", options: { a: "Teknoloji seçiminin işletme ihtiyaçları ve organizasyonel değişimden koparılması", b: "Teknik koşullar tamamlandığında kullanıcı uyumunu otomatik varsaymak", c: "Organizasyonel değişim gereksinimini değerlendirmeyi projenin sonuna bırakmak", d: "Lisans fiyatını tek karar ölçütü kabul edip süreç uyumunu ikinci plana bırakmak", e: "Veri dönüşümünü maliyet dışı ve risksiz kabul etmek" }, answer: "a" },
+      { id: 75, category: "Genel", question: "Ürün hatalarını izleyen bir sistemde sadece hata kodları arşivleniyor; hangi modelde ve ne sıklıkla görüldüğü raporlanmıyor. Bilgi kalitesini karar açısından artıracak iyileştirme hangisidir?", options: { a: "Kodları ürüne bağlamadan toplam kayıt sayısını göstermek", b: "Hata kayıtlarını ürün modeliyle ilişkilendirip görülme sıklıklarını raporlamak", c: "Kayda ilişkin yalnızca depolama kapasitesini artırmak", d: "Hataları sadece oluş tarihine göre dizmek", e: "Kayıtları tekil ve yorumsuz biçimde rapora aktarmak" }, answer: "b" },
+      { id: 76, category: "Genel", question: "Bir üretim şirketi “hangi parçadan ne kadar ve ne zaman gerekiyor?” sorusunu çözen uygulamadan, finans ve insan kaynaklarını da ortak veri içinde yöneten yapıya geçmektedir. Bu dönüşümün özelliği hangisidir?", options: { a: "Entegre süreçlerin yerine tek bir üretim çizelgesi kullanmak", b: "Malzeme ihtiyacına odaklı planlamadan işletme çapında kaynak bütünleşmesine geçiş", c: "Ortak veri bütünleşmesi yerine her departman için ayrı kayıt tutmak", d: "Kapsamı finans ve insan kaynaklarından yalnızca depo yönetimine daraltmak", e: "ERP yerine yalnızca malzeme planlama kayıtlarını çoğaltmak" }, answer: "b" },
+      { id: 77, category: "Genel", question: "Bir proje ekibinde kullanıcılar, yazılım geliştiriciler ve üst yönetim farklı terimler kullanmakta, talepler birbirini tutmamaktadır. Sistem analistinin ilk katkısı ne olmalıdır?", options: { a: "Yalnızca teknik ekibin terimlerini kullanıp iş ihtiyaçlarını buna göre sadeleştirmek", b: "Farklı kullanıcı taleplerini ortak bir çerçeveye oturtmadan tek tek uygulamak", c: "Yönetim beklentilerini diğer taraflarla doğrulamadan nihai gereksinim saymak", d: "Taraflarla görüşerek ihtiyaçları ortak, açık ve doğrulanabilir tanımlara dönüştürmek", e: "İş süreçlerini incelemeyi sürdürmeden önce yalnızca arayüz prototipi hazırlamak" }, answer: "d" },
+      { id: 78, category: "Genel", question: "Bir şirketin müşteri ekranında tüm siparişler doğru görünmektedir; ancak yetkili çağrı merkezi personeli yoğun anda sisteme erişememektedir. Bilginin hangi niteliği sağlanamamaktadır?", options: { a: "Yetkili kişinin ihtiyaç anında erişebilmesi", b: "Müşteri kayıtlarının alfabetik sıralanması", c: "Gelecekteki kararlarla etik uyum kurulması", d: "Verinin kurala uygun biçimde hesaplanması", e: "Kaydın sayısal değerinin doğru olması" }, answer: "a" },
+      { id: 79, category: "Genel", question: "Bir mağaza zinciri binlerce alışveriş kaydından, müşterilerin birlikte satın aldığı ürün gruplarını ve talep örüntülerini keşfetmeye çalışmaktadır. Aşağıdaki çıktılardan hangisi veri madenciliğine en uygundur?", options: { a: "Mevcut siparişlerin tutar toplamını ay bazında hesaplamak", b: "Kullanıcıların tek tek yaptıkları işlemleri kayda almak", c: "Stok adetlerini ürün koduna göre sıralayıp göstermek", d: "Satın alma kayıtlarından tekrar eden ilişkileri ve tahmine yarayan örüntüleri ortaya çıkarmak", e: "Sipariş fişlerinin kod ve tarihlerinin doğruluğunu denetlemek" }, answer: "d" },
+      { id: 80, category: "Genel", question: "Bir şirketin yeni sisteminde liderlik, kaynaklar ve süreçlerin iyileştirildiği belirtiliyor ancak çalışan memnuniyeti ve müşteri sonuçları izlenmiyor. EFQM bakış açısından eksik halka hangisidir?", options: { a: "Başarıyı sağlayan uygulamaların hangi sonuçları doğurduğunun değerlendirilmesi", b: "Yürütülen proje faaliyetlerini müşteri sonuçları yerine tek başarı göstergesi saymak", c: "Liderlik ve strateji faaliyetlerini kullanıcı sonuçlarından ayrı tutmak", d: "Süreç verimliliğini yalnızca kullanılan kaynak miktarı üzerinden değerlendirmek", e: "Çalışan etkisini ölçmeden finansal sonuçları yeterli kabul etmek" }, answer: "a" },
+      { id: 81, category: "Genel", question: "Bir işletme çalışanlarına kurum içindeki yönerge ve formları sunmak, tedarikçilerine ise yalnızca sipariş durumunu gösteren yetkili bir portal açmak istemektedir. Uygun ağ ortamı eşleşmesi hangisidir?", options: { a: "Her iki kullanıcı grubuna aynı kurum içi intranet yetkilerini vermek", b: "Çalışanlar için intranet, yetkili tedarikçiler için extranet", c: "Çalışanlar ve tedarikçiler için erişim kuralı tanımlanmayan ortak dosya alanı kullanmak", d: "Çalışanlar için yalnızca WAN bağlantısı, tedarikçiler için açık internet kullanmak", e: "Çalışanlara extranet, tedarikçilere intranet erişimi sağlamak" }, answer: "b" },
+      { id: 82, category: "Genel", question: "Bir geliştirme projesinde kullanıcı yeni gereksinimini sistem kullanılırken fark ediyor. Ekip bunu kayda alıp yeni bir geliştirme ihtiyacı olarak planlıyor. Bu örnek yaşam döngüsünün hangi özelliğini gösterir?", options: { a: "Sistem canlıya alındığında planlama ihtiyacının sona erdiğini kabul etmek", b: "Yeni talepleri sadece arıza giderme işinin altında toplamak", c: "Kullanım sırasında öğrenilenlerin yeni planlamayı başlatabildiği döngüsel yapıyı", d: "Kullanıcı geri bildirimini sonraki geliştirme kararından bağımsız tutmak", e: "Kullanımdan sonraki talepleri mevcut aşama dışında değerlendirmek" }, answer: "c" },
+      { id: 83, category: "Genel", question: "Bir fatura uygulamasında çalışan tutarı ekrandan giriyor, işletmenin KDV kuralı uygulanıyor ve sonuç ortak müşteri kayıtlarına işleniyor. Bu üç işlem, istemci–sunucu yaklaşımında sırasıyla hangi katmanlarla ilgilidir?", options: { a: "İş mantığı – sunum arayüzü – veritabanı işlemleri", b: "İş mantığı – veritabanı işlemleri – sunum arayüzü", c: "Veritabanı işlemleri – sunum arayüzü – iş mantığı", d: "Sunum arayüzü – veritabanı işlemleri – iş mantığı", e: "Sunum arayüzü – iş mantığı – veritabanı işlemleri" }, answer: "e" },
+      { id: 84, category: "Genel", question: "Bir kurumun müşteri şikâyet sisteminde teknik altyapı sorunsuzdur, fakat kullanıcılar yeni sürece ilişkin eğitim almamış ve farklı kayıt kuralları kullanmaktadır. Hangi adım öncelikle doğru olur?", options: { a: "İş kurallarını düzenlemeden yeni ekranlar eklemek", b: "Mevcut veri farklılıklarını önemsemeyip yalnızca donanım artırmak", c: "Sistemin doğruluğunu yalnızca sunucu hızına bakarak yeterli saymak", d: "Personelin tüm işlemleri tekrar kâğıda almasını kalıcı hedef belirlemek", e: "Kullanıcı, süreç ve ortak veri kurallarını netleştirip eğitim ile uygulamayı uyumlu hâle getirmek" }, answer: "e" }
+    ]
+  }
+};
+
+/**
+ * -------------------------------------------------------------
+ * UYGULAMA DURUM YÖNETİMİ (STATE & PERSISTENCE)
+ * -------------------------------------------------------------
+ */
+let currentCourseKey = "ofis";
+let currentCategory = "Tümü";
+let filteredQuestions = [];
+let currentIndex = 0;
+let userAnswers = {}; // { [questionId]: { choice: 'c', isCorrect: true } }
+let isInstantFeedback = true;
+let isReviewOnlyWrong = false;
+
+// Sayfa Yüklendiğinde
+window.addEventListener("DOMContentLoaded", () => {
+  initCourseSelect();
+  loadSavedState();
+  buildCategoryPills();
+  applyFilters(false);
+});
+
+// Kurs Seçimi
+function initCourseSelect() {
+  const select = document.getElementById("courseSelect");
+  select.innerHTML = "";
+  for (const [key, course] of Object.entries(COURSES_DATA)) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.innerText = course.name;
+    select.appendChild(opt);
+  }
+}
+
+function changeCourse(courseKey) {
+  currentCourseKey = courseKey;
+  currentCategory = "Tümü";
+  userAnswers = {};
+  currentIndex = 0;
+  isReviewOnlyWrong = false;
+  
+  localStorage.setItem("activeCourseKey", courseKey);
+  buildCategoryPills();
+  applyFilters(true);
+}
+
+// Filtre Hapları
+function buildCategoryPills() {
+  const container = document.getElementById("categoryPills");
+  container.innerHTML = "";
+  const categories = COURSES_DATA[currentCourseKey].categories || ["Tümü"];
+
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = `pill ${cat === currentCategory ? 'active' : ''}`;
+    
+    // Soru sayısını hesapla
+    let count = 0;
+    if (cat === "Tümü") {
+      count = COURSES_DATA[currentCourseKey].questions.length;
+    } else {
+      count = COURSES_DATA[currentCourseKey].questions.filter(q => q.category.toLowerCase() === cat.toLowerCase()).length;
+    }
+    btn.innerText = `${cat} (${count})`;
+
+    btn.onclick = () => {
+      currentCategory = cat;
+      buildCategoryPills();
+      applyFilters(true);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function applyFilters(resetIndex = false) {
+  const allQuestions = COURSES_DATA[currentCourseKey].questions;
+  
+  if (currentCategory === "Tümü") {
+    filteredQuestions = [...allQuestions];
+  } else {
+    filteredQuestions = allQuestions.filter(q => q.category.toLowerCase() === currentCategory.toLowerCase());
+  }
+
+  if (isReviewOnlyWrong) {
+    filteredQuestions = filteredQuestions.filter(q => {
+      const ans = userAnswers[q.id];
+      return ans && !ans.isCorrect;
+    });
+  }
+
+  if (resetIndex || currentIndex >= filteredQuestions.length) {
+    currentIndex = 0;
+  }
+
+  updateAttemptBadge();
+  renderPalette();
+  loadQuestion(currentIndex);
+  updateLiveStats();
+  saveState();
+}
+
+// Soru Gösterme
+function loadQuestion(index) {
+  if (filteredQuestions.length === 0) {
+    document.getElementById("qText").innerText = "Bu filtreye ait soru bulunamadı.";
+    document.getElementById("optionsList").innerHTML = "";
+    document.getElementById("feedbackBanner").style.display = "none";
+    return;
+  }
+
+  currentIndex = index;
+  const q = filteredQuestions[index];
+
+  document.getElementById("qCategoryBadge").innerText = q.category || "Genel";
+  document.getElementById("qNumber").innerText = `Soru ${currentIndex + 1} / ${filteredQuestions.length} (ID: #${q.id})`;
+  document.getElementById("qText").innerText = `${currentIndex + 1}. ${q.question}`;
+
+  const currentAns = userAnswers[q.id];
+  const optionsList = document.getElementById("optionsList");
+  optionsList.innerHTML = "";
+  const feedbackEl = document.getElementById("feedbackBanner");
+  feedbackEl.style.display = "none";
+
+  const entries = Object.entries(q.options);
+  entries.forEach(([key, val]) => {
+    const item = document.createElement("div");
+    item.className = "option-item";
+
+    const normalizedKey = key.toLowerCase();
+    const correctKey = String(q.answer).toLowerCase();
+
+    // Seçilmişse ve anlık geri bildirim açık ise renklendir
+    if (currentAns) {
+      if (currentAns.choice === normalizedKey) {
+        item.classList.add("selected");
+      }
+      if (isInstantFeedback) {
+        if (normalizedKey === correctKey) {
+          item.classList.add("correct");
+        } else if (currentAns.choice === normalizedKey && !currentAns.isCorrect) {
+          item.classList.add("incorrect");
+        }
+      }
+    }
+
+    item.onclick = () => selectOption(q.id, normalizedKey, correctKey);
+
+    item.innerHTML = `
+      <div class="opt-key">${key.toUpperCase()}</div>
+      <div class="opt-text"><b>${key.toUpperCase()})</b> ${val}</div>
+    `;
+    optionsList.appendChild(item);
+  });
+
+  // Geri Bildirim Başlığı (Anlık modda)
+  if (currentAns && isInstantFeedback) {
+    feedbackEl.style.display = "block";
+    if (currentAns.isCorrect) {
+      feedbackEl.className = "feedback-banner c";
+      feedbackEl.innerHTML = `✅ <b>Doğru Cevap!</b> Harika, tebrikler.`;
+    } else {
+      feedbackEl.className = "feedback-banner w";
+      feedbackEl.innerHTML = `❌ <b>Yanlış Cevap!</b> Doğru şık: <b>${correctKey.toUpperCase()}</b>`;
+    }
+  }
+
+  document.getElementById("prevBtn").disabled = (index === 0);
+  document.getElementById("nextBtn").innerText = (index === filteredQuestions.length - 1) ? "Tamamla / Son" : "Sonraki →";
+
+  updatePaletteStatus();
+}
+
+function selectOption(qId, selectedKey, correctKey) {
+  const isCorrect = (selectedKey === correctKey);
+  userAnswers[qId] = { choice: selectedKey, isCorrect: isCorrect };
+
+  loadQuestion(currentIndex);
+  updateLiveStats();
+  saveState();
+}
+
+function clearAnswer() {
+  const q = filteredQuestions[currentIndex];
+  if (!q) return;
+  delete userAnswers[q.id];
+  loadQuestion(currentIndex);
+  updateLiveStats();
+  saveState();
+}
+
+function nextQuestion() {
+  if (currentIndex < filteredQuestions.length - 1) {
+    loadQuestion(currentIndex + 1);
+  } else {
+    finishExam();
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    loadQuestion(currentIndex - 1);
+  }
+}
+
+// Palet
+function renderPalette() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  filteredQuestions.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "palette-btn";
+    btn.id = `pal-${q.id}`;
+    btn.innerText = idx + 1;
+    btn.onclick = () => loadQuestion(idx);
+    grid.appendChild(btn);
+  });
+}
+
+function updatePaletteStatus() {
+  filteredQuestions.forEach((q, idx) => {
+    const btn = document.getElementById(`pal-${q.id}`);
+    if (!btn) return;
+    btn.className = "palette-btn";
+    if (idx === currentIndex) btn.classList.add("active");
+
+    const ans = userAnswers[q.id];
+    if (ans) {
+      if (isInstantFeedback) {
+        btn.classList.add(ans.isCorrect ? "correct" : "incorrect");
+      } else {
+        btn.classList.add("answered");
+      }
+    }
+  });
+
+  const total = filteredQuestions.length;
+  const answered = filteredQuestions.filter(q => userAnswers[q.id]).length;
+  document.getElementById("answeredRatio").innerText = `${answered}/${total}`;
+}
+
+// Canlı İstatistikler
+function updateLiveStats() {
+  const total = filteredQuestions.length;
+  let correct = 0;
+  let wrong = 0;
+
+  filteredQuestions.forEach(q => {
+    const ans = userAnswers[q.id];
+    if (ans) {
+      if (ans.isCorrect) correct++;
+      else wrong++;
+    }
+  });
+
+  const answered = correct + wrong;
+  const blank = total - answered;
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+  document.getElementById("liveTotal").innerText = total;
+  document.getElementById("liveCorrect").innerText = correct;
+  document.getElementById("liveWrong").innerText = wrong;
+  document.getElementById("liveBlank").innerText = blank;
+  document.getElementById("liveScore").innerText = `%${pct}`;
+}
+
+// Sınavı Bitir
+function finishExam() {
+  const total = filteredQuestions.length;
+  let correct = 0;
+  let wrong = 0;
+  let blank = 0;
+
+  filteredQuestions.forEach(q => {
+    const ans = userAnswers[q.id];
+    if (!ans) blank++;
+    else if (ans.isCorrect) correct++;
+    else wrong++;
+  });
+
+  let msg = "Sınavı tamamlamak ve deneme geçmişine kaydetmek istiyor musunuz?";
+  if (blank > 0) {
+    msg = `Dikkat: ${blank} adet boş sorunuz var. Sınavı yine de bitirmek istiyor musunuz?`;
+  }
+  if (!confirm(msg)) return;
+
+  const pct = Math.round((correct / total) * 100);
+  const attemptNum = getAttemptCount(currentCourseKey) + 1;
+
+  // Sonuç ekranını doldur
+  document.getElementById("resAttemptTitle").innerText = `🎉 ${attemptNum}. Deneme Tamamlandı! (${COURSES_DATA[currentCourseKey].name})`;
+  document.getElementById("resPercentage").innerText = `%${pct}`;
+  document.getElementById("resCorrect").innerText = correct;
+  document.getElementById("resWrong").innerText = wrong;
+  document.getElementById("resBlank").innerText = blank;
+  document.getElementById("resNet").innerText = `${correct} / ${total}`;
+  document.getElementById("nextAttemptBtn").innerText = `🔄 ${attemptNum + 1}. Denemeye Başla`;
+
+  let fb = "Fena değil, hatalarınızı inceleyerek sonraki denemede daha yüksek yapabilirsiniz!";
+  if (pct >= 85) fb = "Mükemmel! Konuya tamamen hakimsiniz 🚀";
+  else if (pct >= 70) fb = "Çok iyi! Birkaç tekrarla %95+ yapabilirsiniz 👍";
+  document.getElementById("resFeedback").innerText = fb;
+
+  // Geçmişe Kaydet
+  saveAttemptToHistory(currentCourseKey, attemptNum, currentCategory, total, correct, wrong, blank, pct);
+
+  // Ekranı göster
+  document.getElementById("examScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("finishBtnHeader").style.display = "none";
+}
+
+// Yeni Denemeye Başla (Sıfırla ve Devam Et)
+function startNextAttempt() {
+  userAnswers = {};
+  isReviewOnlyWrong = false;
+  
+  document.getElementById("resultsScreen").style.display = "none";
+  document.getElementById("examScreen").style.display = "grid";
+  document.getElementById("finishBtnHeader").style.display = "inline-flex";
+
+  applyFilters(true);
+}
+
+// İnceleme Modu
+function reviewExam(mode) {
+  document.getElementById("resultsScreen").style.display = "none";
+  document.getElementById("examScreen").style.display = "grid";
+  document.getElementById("finishBtnHeader").style.display = "inline-flex";
+
+  if (mode === "wrong") {
+    isReviewOnlyWrong = true;
+  } else {
+    isReviewOnlyWrong = false;
+  }
+  applyFilters(true);
+}
+
+function toggleInstantFeedback(enabled) {
+  isInstantFeedback = enabled;
+  loadQuestion(currentIndex);
+}
+
+// LocalStorage (Oturum Koruma)
+function saveState() {
+  const state = {
+    courseKey: currentCourseKey,
+    category: currentCategory,
+    currentIndex: currentIndex,
+    userAnswers: userAnswers,
+    isInstantFeedback: isInstantFeedback
+  };
+  localStorage.setItem(`exam_session_${currentCourseKey}`, JSON.stringify(state));
+}
+
+function loadSavedState() {
+  const savedCourse = localStorage.getItem("activeCourseKey");
+  if (savedCourse && COURSES_DATA[savedCourse]) {
+    currentCourseKey = savedCourse;
+  }
+  document.getElementById("courseSelect").value = currentCourseKey;
+
+  const raw = localStorage.getItem(`exam_session_${currentCourseKey}`);
+  if (raw) {
+    try {
+      const state = JSON.parse(raw);
+      currentCategory = state.category || "Tümü";
+      currentIndex = state.currentIndex || 0;
+      userAnswers = state.userAnswers || {};
+      isInstantFeedback = (state.isInstantFeedback !== undefined) ? state.isInstantFeedback : true;
+      document.getElementById("instantFeedbackToggle").checked = isInstantFeedback;
+    } catch (e) {
+      console.warn("Kayıtlı oturum çözülemedi:", e);
+    }
+  }
+}
+
+// Deneme Geçmişi (History)
+function getAttemptCount(courseKey) {
+  const history = JSON.parse(localStorage.getItem(`exam_history_${courseKey}`) || "[]");
+  return history.length;
+}
+
+function updateAttemptBadge() {
+  const nextAttempt = getAttemptCount(currentCourseKey) + 1;
+  document.getElementById("headerAttemptBadge").innerText = `${nextAttempt}. Deneme`;
+}
+
+function saveAttemptToHistory(courseKey, attemptNum, cat, total, c, w, b, pct) {
+  const historyKey = `exam_history_${courseKey}`;
+  const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+  history.push({
+    attempt: attemptNum,
+    date: new Date().toLocaleString("tr-TR"),
+    category: cat,
+    total: total,
+    correct: c,
+    wrong: w,
+    blank: b,
+    percentage: pct
+  });
+  localStorage.setItem(historyKey, JSON.stringify(history));
+  updateAttemptBadge();
+}
+
+function openHistoryModal() {
+  const history = JSON.parse(localStorage.getItem(`exam_history_${currentCourseKey}`) || "[]");
+  const container = document.getElementById("historyTableContainer");
+
+  if (history.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding: 24px; color: var(--text-muted);">Bu ders için henüz tamamlanmış bir denemeniz bulunmuyor.</div>`;
+  } else {
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Deneme</th>
+            <th>Tarih</th>
+            <th>Filtre</th>
+            <th>Doğru</th>
+            <th>Yanlış</th>
+            <th>Boş</th>
+            <th>Başarı %</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    history.forEach(item => {
+      let color = item.percentage >= 70 ? "var(--success)" : (item.percentage >= 50 ? "var(--warning)" : "var(--danger)");
+      html += `
+        <tr>
+          <td><b>#${item.attempt}</b></td>
+          <td style="font-size:0.8rem; color:var(--text-muted);">${item.date}</td>
+          <td><span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:600;">${item.category}</span></td>
+          <td style="color:var(--success); font-weight:700;">${item.correct}</td>
+          <td style="color:var(--danger); font-weight:700;">${item.wrong}</td>
+          <td style="color:var(--warning); font-weight:700;">${item.blank}</td>
+          <td style="font-weight:800; color:${color};">%${item.percentage}</td>
+        </tr>
+      `;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+  document.getElementById("historyModal").style.display = "flex";
+}
+
+function closeHistoryModal() {
+  document.getElementById("historyModal").style.display = "none";
+}
+
+function clearCurrentCourseHistory() {
+  if (confirm(`${COURSES_DATA[currentCourseKey].name} dersine ait tüm deneme geçmişiniz silinecek. Onaylıyor musunuz?`)) {
+    localStorage.removeItem(`exam_history_${currentCourseKey}`);
+    updateAttemptBadge();
+    openHistoryModal();
+  }
+}
+</script>
+</body>
+</html>

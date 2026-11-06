@@ -1,0 +1,20 @@
+{
+  "name": "Üniversite Sınav Simülatörü",
+  "short_name": "Sınav Portalı",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f5fb",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

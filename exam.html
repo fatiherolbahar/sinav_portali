@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sınav – Sınav Portalı</title>
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="description" content="Çoklu ders destekli üniversite sınav simülatörü ve test portalı.">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Üniversite Sınav Simülatörü">
+  <meta property="og:description" content="Çoklu ders destekli üniversite sınav simülatörü ve test portalı.">
+  <meta property="og:image" content="assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="btn" href="index.html">← Ana Sayfaya Dön</a>
+    <div class="title">
+      <h1 id="courseName">Yükleniyor…</h1>
+      <span class="badge" id="attemptBadge"></span>
+    </div>
+    <button class="btn" id="historyBtn">📊 Deneme Geçmişi</button>
+    <button class="btn btn-primary" id="finishBtn">✓ Sınavı Bitir</button>
+  </header>
+
+  <main class="container">
+    <div id="loading" class="center-msg">Sınav yükleniyor…</div>
+    <div id="error" class="center-msg hidden"></div>
+
+    <section id="examView" class="hidden">
+      <div id="banner" class="banner hidden"></div>
+      <div class="filterbar">
+        <div class="pills" id="pills"></div>
+        <label class="switch" title="Şık tıklandığı anda doğru/yanlış gösterilir">
+          <input type="checkbox" id="feedbackToggle"><span class="track"></span>
+          <span>Anlık Geri Bildirim</span>
+        </label>
+      </div>
+      <div class="statusbar" id="status"></div>
+      <div class="layout">
+        <section class="card q-card" id="qCard"></section>
+        <aside class="card palette" id="palette">
+          <h3><span>Soru Paleti</span><button class="drawer-close" id="paletteClose">✕</button></h3>
+          <div class="pgrid" id="pgrid"></div>
+          <div class="legend" id="legend"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="resultView" class="hidden"></section>
+  </main>
+
+  <button class="fab hidden" id="paletteFab">🧭 Soru Paleti</button>
+  <div class="overlay" id="overlay"></div>
+
+  <script src="data/courses-manifest.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/exam-engine.js"></script>
+</body>
+</html>
