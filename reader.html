@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ders Notları – Sınav Portalı</title>
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="reader-body">
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-bar" id="progressBar"></div></div>
+
+  <header class="topbar">
+    <a class="btn" href="index.html">← <span class="tx">Ders Seçimine </span>Dön</a>
+    <div class="title"><h1 id="courseName">Ders Notları</h1><span class="badge" id="topicBadge"></span></div>
+    <button class="btn toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="toc">☰ İçindekiler</button>
+  </header>
+
+  <div class="reader-layout">
+    <aside class="toc" id="toc" aria-label="İçindekiler">
+      <div class="toc-head">İçindekiler</div>
+      <nav id="tocList"></nav>
+    </aside>
+    <div class="toc-backdrop" id="tocBackdrop"></div>
+
+    <main class="reader-main">
+      <div class="search-box">
+        <span aria-hidden="true">🔍</span>
+        <input type="search" id="searchInput" placeholder="Not içinde ara: Althusser, Stereotip, TikTok…" autocomplete="off" aria-label="Notlarda ara">
+        <span class="search-count" id="searchCount"></span>
+      </div>
+      <div id="notes"></div>
+      <p class="empty hidden" id="noResult">Aramanızla eşleşen not bulunamadı.</p>
+    </main>
+  </div>
+
+  <script src="data/courses-manifest.js"></script>
+  <script src="js/reader.js"></script>
+</body>
+</html>

@@ -17,5 +17,14 @@ window.COURSES_MANIFEST = [
     questionCount: 84,
     categories: ['Tümü'],
     file: 'data/sistem-analizi.js'
+  },
+  {
+    id: 'populer-kultur',
+    name: 'Popüler Kültür ve Medya',
+    type: 'reading',
+    topicCount: 10,
+    questionCount: 0,
+    categories: ['Okuma Modülü'],
+    file: 'data/populer-kultur.js'
   }
 ];

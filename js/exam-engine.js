@@ -157,11 +157,12 @@
       '<span style="margin-left:auto;color:var(--muted);font-size:.8rem">' + (pos + 1) + ' / ' + v.length + '</span></div>' +
       '<div class="q-text">' + esc(q.q) + '</div><div class="opts">' + opts + '</div>' + exp +
       (mode === 'exam' && counts().blank === 0 ? '<div class="banner" style="margin:1.1rem 0 0;background:#dcfce7;border-color:#86efac;color:#166534"><span>🎉 Tüm soruları cevapladınız!</span><button class="btn btn-primary" id="doneBtn">✓ Sınavı Bitir</button></div>' : '') +
-      '<div class="q-actions"><div class="grp"><button class="btn" id="prevBtn"' + (pos === 0 ? ' disabled' : '') + '>← Önceki</button>' +
-      '<button class="btn" id="nextBtn"' + (pos === v.length - 1 ? ' disabled' : '') + '>Sonraki →</button></div>' +
+      '<div class="q-actions"><div class="nav"><button class="btn" id="prevBtn"' + (pos === 0 ? ' disabled' : '') + '>← Önceki</button>' +
+      '<button class="btn pal-btn" id="palBtn">🧭 ' + (pos + 1) + ' / ' + v.length + '</button><button class="btn" id="nextBtn"' + (pos === v.length - 1 ? ' disabled' : '') + '>Sonraki →</button></div>' +
       (mode === 'review' ? '' : '<button class="btn" id="clearBtn"' + (ans === undefined ? ' disabled' : '') + '>↺ Boş Bırak / Seçimi Kaldır</button>') + '</div>';
 
     card.querySelectorAll('.opt').forEach(function (b) { b.onclick = function () { choose(b.dataset.l); }; });
+    $('#palBtn').onclick = function () { document.body.classList.add('palette-open'); };
     $('#prevBtn').onclick = function () { go(v[pos - 1]); };
     $('#nextBtn').onclick = function () { go(v[pos + 1]); };
     var db = $('#doneBtn'); if (db) db.onclick = askFinish;

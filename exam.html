@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Sınav – Sınav Portalı</title>
   <meta name="theme-color" content="#4f46e5">
   <meta name="description" content="Çoklu ders destekli üniversite sınav simülatörü ve test portalı.">
@@ -22,13 +22,13 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="btn" href="index.html">← Ana Sayfaya Dön</a>
+    <a class="btn btn-back" href="index.html" aria-label="Ana Sayfaya Dön"><span>←</span><span class="tx">Ana Sayfaya Dön</span></a>
     <div class="title">
       <h1 id="courseName">Yükleniyor…</h1>
       <span class="badge" id="attemptBadge"></span>
     </div>
-    <button class="btn" id="historyBtn">📊 Deneme Geçmişi</button>
-    <button class="btn btn-primary" id="finishBtn">✓ Sınavı Bitir</button>
+    <button class="btn" id="historyBtn"><span>📊</span><span class="tx">Deneme Geçmişi</span></button>
+    <button class="btn btn-primary" id="finishBtn"><span>✓</span><span class="tx">Sınavı Bitir</span></button>
   </header>
 
   <main class="container">
@@ -48,7 +48,7 @@
       <div class="layout">
         <section class="card q-card" id="qCard"></section>
         <aside class="card palette" id="palette">
-          <h3><span>Soru Paleti</span><button class="drawer-close" id="paletteClose">✕</button></h3>
+          <h3><span class="grab"></span><span>Soru Paleti</span><button class="drawer-close" id="paletteClose">✕</button></h3>
           <div class="pgrid" id="pgrid"></div>
           <div class="legend" id="legend"></div>
         </aside>

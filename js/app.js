@@ -18,6 +18,16 @@
     var grid = $('#courseGrid');
     if (!courses.length) { grid.innerHTML = '<p class="empty">Kayıtlı ders bulunamadı.</p>'; return; }
     grid.innerHTML = courses.map(function (c) {
+      if (c.type === 'reading') {
+        return '<article class="card course-card reading-card">' +
+          '<div class="tags"><span class="badge tag reading-tag">📖 Okuma Modülü</span></div>' +
+          '<h3>' + esc(c.name) + '</h3>' +
+          '<div class="meta">' +
+          '<div>İçerik<b>' + c.topicCount + ' Konu Başlığı</b></div>' +
+          '<div>Tür<b>Ders Notları & Özet</b></div>' +
+          '</div>' +
+          '<a class="btn btn-primary btn-block btn-lg" href="reader.html?course=' + encodeURIComponent(c.id) + '">📖 Okumaya Başla</a></article>';
+      }
       var st = S.stats(c.id);
       var sess = S.getSession(c.id);
       var active = sess && !sess.finished && Object.keys(sess.answers || {}).length > 0;
