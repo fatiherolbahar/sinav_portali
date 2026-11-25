@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bilgisayar Becerileri Sınav Portalı (Word & Excel)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --badge-word: #2563eb;
+      --badge-excel: #16a34a;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header-title p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-pill.correct { color: var(--success); border-color: rgba(34, 197, 94, 0.4); }
+    .stat-pill.wrong { color: var(--danger); border-color: rgba(239, 68, 68, 0.4); }
+    .stat-pill.total { color: var(--primary); border-color: rgba(56, 189, 248, 0.4); }
+
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn, .mode-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover, .mode-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .filter-btn.active, .mode-btn.active {
+      background: var(--primary);
+      color: #0f172a;
+      border-color: var(--primary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .question-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-word { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+    .badge-excel { background: rgba(22, 163, 74, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+
+    .q-number {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #475569;
+    }
+
+    .option-letter {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      min-width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .option-btn.correct {
+      background: var(--success-bg) !important;
+      border-color: var(--success) !important;
+      color: #86efac !important;
+    }
+
+    .option-btn.wrong {
+      background: var(--danger-bg) !important;
+      border-color: var(--danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    .nav-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: #0f172a;
+      border-color: var(--primary);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .quick-jump-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+
+    .quick-jump-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .grid-numbers {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .q-jump-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      height: 36px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .q-jump-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .q-jump-btn.active {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .q-jump-btn.is-correct {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .q-jump-btn.is-wrong {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .score-modal {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .score-modal h2 { font-size: 1.6rem; color: #fff; }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 5px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .back-btn:active {
+      transform: scale(0.92);
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 12px 10px 30px; }
+      header { padding: 14px 16px; gap: 12px; }
+      .header-title h1 { font-size: 1.15rem; }
+      .stats-bar { width: 100%; justify-content: space-between; }
+      .stat-pill { flex: 1; justify-content: center; padding: 6px 8px; font-size: 0.78rem; }
+      .question-card { padding: 18px 16px; gap: 16px; }
+      .question-text { font-size: 1.02rem; }
+      .option-btn { padding: 12px 14px; font-size: 0.9rem; }
+      .nav-btn { flex: 1; padding: 10px 12px; text-align: center; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="index.html" class="back-btn" aria-label="Ana Sayfaya Dön" title="Ana Sayfaya Dön">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </a>
+        <div class="header-title">
+          <h1>Bilgisayar Becerileri Sınav Portalı</h1>
+          <p>Microsoft Word & Excel Çoktan Seçmeli Test Modülü</p>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-pill total">Soru: <span id="currentQDisplay">1/79</span></div>
+        <div class="stat-pill correct">Doğru: <span id="correctScore">0</span></div>
+        <div class="stat-pill wrong">Yanlış: <span id="wrongScore">0</span></div>
+      </div>
+    </header>
+
+    <div class="controls-panel">
+      <div class="btn-group">
+        <button class="filter-btn active" data-cat="all">Tümü (79)</button>
+        <button class="filter-btn" data-cat="Word">Word (39)</button>
+        <button class="filter-btn" data-cat="Excel">Excel (40)</button>
+      </div>
+      <div class="btn-group">
+        <button class="mode-btn" id="resetBtn">Sıfırla</button>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <main id="quizContainer">
+      <div class="question-card">
+        <div class="question-top">
+          <span class="badge" id="categoryBadge">WORD</span>
+          <span class="q-number" id="questionNumber">Soru 1 / 79</span>
+        </div>
+
+        <div class="question-text" id="questionText">Soru yükleniyor...</div>
+
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <div class="nav-actions">
+          <button class="nav-btn" id="prevBtn">← Önceki Soru</button>
+          <button class="nav-btn" id="nextBtn">Sonraki Soru →</button>
+        </div>
+      </div>
+    </main>
+
+    <div class="quick-jump-panel">
+      <div class="quick-jump-title">Soru Listesi & Durum</div>
+      <div class="grid-numbers" id="gridNumbers"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      // Word Bölüm 1
+      { id: 1, category: "Word", question: "Word programı temel olarak ne amaçla kullanılmaktadır?", options: { a: "Sürücüler üzerinde kopyalama ve taşıma işlemleri yapılır", b: "Hesap tabloları oluşturulur, veri tablosunun grafikleri oluşturulur", c: "Kelime işlemci programıdır. Belge ve dokümanlar hazırlanır", d: "Resim hazırlanır ve resimler üzerinde ayarlamalar yapılır" }, answer: "c" },
+      { id: 2, category: "Word", question: "Yazı yazarken Enter tuşuna basmak Word’de ne anlama gelir?", options: { a: "Yeni sütun başına geçer", b: "Kelimeler arası boşluk verir", c: "Paragraf başı yapar", d: "Yeni sayfa başına geçer" }, answer: "c" },
+      { id: 3, category: "Word", question: "Belgeye resim eklemek için aşağıdaki seçeneklerden hangisi doğru bir yol tanımlamasıdır?", options: { a: "Ekle (Insert) – SmartArt", b: "Ekle (Insert) – Resimler (Picture)", c: "Ekle (Insert) – Şekiller (Shapes)", d: "Ekle (Insert) – Tablo (Table)" }, answer: "b" },
+      { id: 4, category: "Word", question: "Metnin tamamını seçmek için klavyede hangi tuşlar kullanılır?", options: { a: "CTRL + A", b: "SHIFT + A", c: "CTRL + S", d: "CTRL + V" }, answer: "a" },
+      { id: 5, category: "Word", question: "Word programında hazırlanan dosyaların (belge) uzantısı aşağıdakilerden hangisidir?", options: { a: ".xlsx", b: ".docx", c: ".bmpx", d: ".dotx" }, answer: "b" },
+      { id: 6, category: "Word", question: "B, I, U (Kalın, İtalik, Altı Çizili) simgelerinin isimleri aşağıdaki seçeneklerin hangisinde doğru olarak verilmiştir?", options: { a: "İtalik – Altı Çizili – Alt Simge", b: "Altı Çizili – Kalın – Üst Simge", c: "İnce – Altı Çizili – İtalik", d: "Kalın – İtalik – Altı Çizili" }, answer: "d" },
+      { id: 7, category: "Word", question: "Microsoft Word’de Dosya (File) menüsünde aşağıdakilerden hangisi bulunmaz?", options: { a: "Yeni (New)", b: "Tablo ekle (Insert Table)", c: "Aç (Open)", d: "Kaydet (Save)" }, answer: "b" },
+      { id: 8, category: "Word", question: "Metin hizalama simgeleri (Sola ve Ortaya) ne için kullanılır?", options: { a: "Yazılarımızı renkli yapmaya yarar", b: "Yazılarımızın yönünü değiştirir", c: "Yazılarımızı sola ve ortaya hizalar", d: "Yazımızı sütunlara böler" }, answer: "c" },
+      { id: 9, category: "Word", question: "Belge içerisinde 1. sayfadan bir nesneyi seçtikten sonra Ctrl+C tuşlarına basıp, daha sonra 2. sayfaya geçerek Ctrl+V tuşlarına basılırsa ne olur?", options: { a: "1. sayfadaki nesne, 2. sayfaya taşınır", b: "2. sayfadaki nesne, 1. sayfaya taşınır", c: "2. sayfadaki nesne, 1. sayfaya kopyalanır", d: "1. sayfadaki nesne, 2. sayfaya kopyalanır" }, answer: "d" },
+      { id: 10, category: "Word", question: "Madde işaretleri ve numaralandırma ile ilgili aşağıdakilerden hangisi yanlıştır?", options: { a: "Paragraf menüsünde yer alır.", b: "Bu soruların şıkları yazılırken kullanılmıştır.", c: "Sayfaya otomatik sayfa numarası verir.", d: "Madde işaretlerinin renkleri değiştirilebilir." }, answer: "c" },
+
+      // Word Bölüm 2
+      { id: 11, category: "Word", question: "Aşağıdakilerden hangisi bir Yazı Tipi (Font) stili değildir?", options: { a: "Kalın (Bold)", b: "İtalik (Italic)", c: "Normal (Regular)", d: "Üstsimge (Superscript)" }, answer: "c" },
+      { id: 12, category: "Word", question: "Word’de bir metin yazarken paragraf başı yapmak için hangi tuşa ya da tuşlara basılır?", options: { a: "Aşağı Ok tuşu", b: "Enter tuşu", c: "Shift + Enter", d: "Ctrl + Enter" }, answer: "b" },
+      { id: 13, category: "Word", question: "Belgeye Üstbilgi (Header) ve Altbilgi (Footer) eklemek için hangi menü kullanılır?", options: { a: "Biçim (Format) menüsü", b: "Görünüm (View) menüsü", c: "Araçlar (Tools) menüsü", d: "Ekle (Insert) menüsü" }, answer: "d" },
+      { id: 14, category: "Word", question: "Aşağıdakilerden hangisi bir Satır Aralığı (Line Spacing) türü değildir?", options: { a: "Çoklu (Multiple)", b: "Üçlü (Triple)", c: "Çift (Double)", d: "Tek (Single)" }, answer: "b" },
+      { id: 15, category: "Word", question: "Bir metni taşıma işlemi aşağıdakilerden hangi işlem grubu ile yapılabilir?", options: { a: "Kopyala ve Yapıştır", b: "Kes ve Kopyala", c: "Kes ve Yapıştır", d: "Yapıştır ve Sil" }, answer: "c" },
+      { id: 16, category: "Word", question: "Biçim Boyacısı (Format Painter) işlevi ne için kullanılır?", options: { a: "Bir metnin rengini değiştirmek", b: "Biçimlendirmeyi kopyalayıp, başka bir yere uygulamak", c: "Seçili bir metni silmek", d: "Arka plan rengi uygulamak" }, answer: "b" },
+      { id: 17, category: "Word", question: "Ekle (Insert) menüsünde ClipArt seçildiğinde aşağıdakilerden hangisi ilk olarak gerçekleşir?", options: { a: "Belgeye bir ClipArt resmi eklenir", b: "Belgeye eklenecek ClipArt resmini seçme seçeneği sunulur", c: "ClipArt görev menüsü açılır", d: "Hiçbiri" }, answer: "c" },
+      { id: 18, category: "Word", question: "Hizalama komutlarının (Sola, Ortala, Sağa, Yasla) görevleri sırasıyla nelerdir?", options: { a: "Ortala – Sola hizala – Yasla – Sağa hizala", b: "Sola hizala – Ortala – Sağa hizala –Yasla", c: "Yasla – Ortala – Sola hizala – Sağa hizala", d: "Yasla – Sağa hizala – Ortala – Sola hizala" }, answer: "b" },
+      { id: 19, category: "Word", question: "Tablo simgesinin görevi nedir?", options: { a: "Resim Ekle", b: "Şekil Ekle", c: "Metin Kutusu Ekle", d: "Tablo Ekle" }, answer: "d" },
+
+      // Word Bölüm 3
+      { id: 20, category: "Word", question: "Bir Word belgesinde her sayfanın alt kısmında aynı metnin yazılı olması hangi özellik ile sağlanır?", options: { a: "Üstbilgi (Header)", b: "Dipnot (Footnote)", c: "Başlık (Title)", d: "Altbilgi (Footer)" }, answer: "d" },
+      { id: 21, category: "Word", question: "Sayfa numarası aşağıdaki alanlardan hangisinde yer alabilir?", options: { a: "Dipnot (Footnote)", b: "Üstbilgi (Header)", c: "Yer işareti (Bookmark)", d: "SmartArt" }, answer: "b" },
+      { id: 22, category: "Word", question: "Bir tablonun sınır çizgilerini kaldırmak ya da gizlemek için aşağıdaki komutlardan hangisi kullanılır?", options: { a: "Kenarlık Yok (No Border)", b: "Çizgi Yok (No Line)", c: "Çerçeve Yok (No Outline)", d: "Beyaz çizgi (White Line)" }, answer: "a" },
+      { id: 23, category: "Word", question: "Aşağıdaki komutlardan hangisi iki veya daha çok tablo hücresini birleştirip tek hücre haline getirmek için kullanılır?", options: { a: "Hücre Böl (Split Cells)", b: "Otomatik Sığdır (AutoFit)", c: "Tablo Böl (Split Table)", d: "Hücreleri Birleştir (Merge Cells)" }, answer: "d" },
+      { id: 24, category: "Word", question: "Bir Word belgesine eklenmiş olan bir tabloda aşağıdakilerden hangisi uygulanamaz?", options: { a: "Hücre yüksekliği ve genişliğini ayarlamak", b: "Altbilgi eklemek", c: "Yeni satır eklemek", d: "Resim eklemek" }, answer: "b" },
+      { id: 25, category: "Word", question: "Bir Word belgesine eklenen bir resmin metne göre yeri hangi menüden ayarlanır?", options: { a: "Ekle > Resim (Insert > Picture)", b: "Resim Araçları > Metni Kaydır (Picture Tools > Wrap Text)", c: "Giriş > Yasla (Home > Justify)", d: "Çizim Araçları > Şekil Efektleri (Drawing Tools>Shape Effects)" }, answer: "b" },
+      { id: 26, category: "Word", question: "Belge içerisinde, bir sonraki sayfayı metin içerisinde belirli bir konumdan başlatmak için hangi özellik kullanılır?", options: { a: "Dosya > Yeni (File > New)", b: "Referanslar > Dipnot (References > Footnote)", c: "Sayfa Yapısı > Kenarlıklar (Page Layout > Page Borders)", d: "Ekle > Sayfa Sonu (Insert > Page Break)" }, answer: "d" },
+      { id: 27, category: "Word", question: "«Metni Tabloya Dönüştür» («Convert Text to Table») seçeneği aşağıdakilerden hangisi için kullanılır?", options: { a: "Tablo içerisinde hücre yüksekliğini değiştirmek için", b: "Seçilen bir metin grubundan tablo oluşturmak için", c: "Metnin yönünü değiştirmek için", d: "Tablodaki metnin hizalamasını değiştirmek için" }, answer: "b" },
+      { id: 28, category: "Word", question: "Sayfayı dikey durumdan yatay duruma getirmek için aşağıdakilerden hangisi kullanılır?", options: { a: "Sayfa Düzeni > Yönlendirme (Page Layout > Orientation)", b: "Sayfa Düzeni > Kenar Boşlukları (Page Layout > Margins)", c: "Sayfa Düzeni > Boyut (Page Layout > Size)", d: "Sayfa Düzeni > Sütunlar (Page Layout > Columns)" }, answer: "a" },
+      { id: 29, category: "Word", question: "Bir metnin yazı tipi hangi menüden değiştirilir?", options: { a: "Ekle > Metin Kutusu (Insert > Text Box)", b: "Sayfa Düzeni > Metni Kaydır (Page Layout > Wrap Text)", c: "Başvurular > Alıntı (References > Citation)", d: "Giriş > Yazı Tipi (Home > Font)" }, answer: "d" },
+
+      // Word Bölüm 4
+      { id: 30, category: "Word", question: "Belgelerde, açıklama yapmak, yorumda bulunmak veya belgede sözü edilen bir şeye gönderme yapmak amacıyla kullanılan özellik hangisidir?", options: { a: "Üstbilgi (Header)", b: "Dipnot (Footnote)", c: "Başlık notu (Head note)", d: "Altbilgi (Footer)" }, answer: "b" },
+      { id: 31, category: "Word", question: "Dipnot (Footnote) belge içerisinde hangi konumda yer alır?", options: { a: "Belgenin sonunda", b: "Sayfanın sonunda", c: "Başlığın sonunda", d: "Hiçbiri" }, answer: "b" },
+      { id: 32, category: "Word", question: "Varsayılan ayarlarda, Üstbilgi (Header) yada Altbilgi (Footer) hangi sayfada görünür?", options: { a: "Sadece ilk sayfada", b: "Sadece sayfa numarası tek sayı olan sayfalarda", c: "Her sayfada", d: "Sadece son sayfada" }, answer: "c" },
+      { id: 33, category: "Word", question: "Aşağıdakilerden hangisine Kenarlık (Borders) uygulanabilir?", options: { a: "Hücrelere", b: "Metinlere", c: "Paragraflara", d: "Yukarıdakilerin tümüne" }, answer: "d" },
+      { id: 34, category: "Word", question: "Aşağıdakilerden hangisi bir sayfa kenarlığı (Page Border) tipi değildir?", options: { a: "Sağ", b: "Orta", c: "Üst", d: "Sol" }, answer: "b" },
+      { id: 35, category: "Word", question: "Aşağıdakilerden hangisi, Tablo eklerken kullanılan Otomatik Sığdırma (AutoFit) seçeneklerinden değildir?", options: { a: "Sabit Sütun Genişliği (Fixed Column Width)", b: "İçindekilere göre Otomatik Sığdır (AutoFit to Contents)", c: "Sütuna Otomatik Sığdır (AutoFit to Column)", d: "Pencereye Otomatik Sığdır (AutoFit to Window)" }, answer: "c" },
+      { id: 36, category: "Word", question: "Madde İşareti (Bulleting) ve Numaralandırma (Numbering) özellikleri için hangi menü kullanılır?", options: { a: "Dosya > Sayfa Ayarları (File > Page Setup)", b: "Ekle>Madde İşareti/Numaralandırma (Insert>Bullets/Numbering)", c: "Ekle > Sayfa Numaralandırma (Insert > Page Numbers)", d: "Giriş>Madde İşareti/Numaralandırma (Home>Bullets/Numbering)" }, answer: "d" },
+      { id: 37, category: "Word", question: "Dipnot (Footnote) ve Sonnot (Endnote) hakkında aşağıdakilerden hangisi yanlıştır?", options: { a: "Dipnot sayfanın en altında, Sonnot belgenin sonunda yer alır", b: "Dipnotlar Sonnota dönüştürülebilir", c: "Sonnot metinleri değiştirilemez", d: "Dipnot ve Sonnot yazı tipleri değiştirilebilir" }, answer: "c" },
+      { id: 38, category: "Word", question: "Üstbilgi (Header) ve Altbilgi (Footer) hangi amaçla kullanılır?", options: { a: "Büyük belgeleri daha okunaklı hale getirmek için", b: "Bir sayfanın başlangıç ve bitişini işaretlemek için", c: "Dokümanın genel görünümünü geliştirmek için", d: "Belgenin her sayfasında yer almasını istediğimiz bilgileri tek seferde yazabilmek için" }, answer: "d" },
+      { id: 39, category: "Word", question: "Tanımdaki boşluğa doğru kelimeyi yazınız: '................, yazımızda, başka bir yazı veya kişiden bir parça yayınlamak, örnek göstermek, eklemek anlamındadır.'", options: { a: "İçindekiler Tablosu (Table of Contents)", b: "Filigran (Watermark)", c: "Alıntı (Citation)", d: "Köprü (Hyperlink)" }, answer: "c" },
+
+      // Excel Bölüm 1
+      { id: 40, category: "Excel", question: "Excel programında hazırlanan dosyaların (çalışma sayfası) uzantısı aşağıdakilerden hangisidir?", options: { a: ".xlsx", b: ".docx", c: ".bmpx", d: ".dotx" }, answer: "a" },
+      { id: 41, category: "Excel", question: "Aşağıdakilerden hangisi 'Hücreleri Biçimlendir (Format Cells)' panosunda yoktur?", options: { a: "Metni kaydırma, hücreleri birleştirme", b: "Metin yönü ayarlama, hizalama", c: "Kenarlıklar, sayı biçimleri", d: "Veri sıralama" }, answer: "d" },
+      { id: 42, category: "Excel", question: "Σ (Sigma) komutu ne için kullanılır?", options: { a: "Ortalama hesaplar", b: "Toplama işlemi yapar", c: "Para birimi yazar", d: "Yazdırma komutudur" }, answer: "b" },
+      { id: 43, category: "Excel", question: "Kenarlık simgelerinin (Kenarlık yok, Alt kenarlık, Sol kenarlık, Sağ kenarlık) sıralanışı aşağıdakilerden hangisinde doğru olarak verilmiştir?", options: { a: "Kenarlık yok – Çerçeve – Kalın çerçeve – Üst ve alt kenarlık", b: "Çift alt kenarlık – Kalın alt kenarlık – Üst ve alt kenarlık – Üst tek alt çift kenarlık", c: "Kenarlık yok – Alt kenarlık – Sol kenarlık – Sağ kenarlık", d: "Üst ve kalın alt kenarlık – Tüm kenarlıklar- Çerçeve – Kalın çerçeve" }, answer: "c" },
+      { id: 44, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de formül olamaz?", options: { a: "=(A1+B1)", b: "A1+B1", c: "=A1+B1", d: "=TOPLA(A1;B1)" }, answer: "b" },
+      { id: 45, category: "Excel", question: "Excel’de A5 neyi temsil eder?", options: { a: "A sütunu – 5. satır", b: "5. satırı – 5. sütun", c: "A satırı – 1. sütun", d: "A satırı – 5. sütunu" }, answer: "a" },
+      { id: 46, category: "Excel", question: "Çalışma alanı, kılavuz çizgileriyle satır ve sütunlara bölünmüştür. Kılavuz çizgilerinin oluşturduğu satır ve sütunların kesişimi ile oluşan bu kutulara ne denir?", options: { a: "Dikey kaydırma çubuğu", b: "Grafik", c: "Aktif çalışma sayfası", d: "Hücre" }, answer: "d" },
+      { id: 47, category: "Excel", question: "Aşağıdakilerden hangisi B8 hücresinin değerini getirir?", options: { a: "=B(8)", b: "=B8", c: "B8$", d: "=8B" }, answer: "b" },
+      { id: 48, category: "Excel", question: "Hücre için aşağıdakilerden hangisi doğrudur?", options: { a: "A-B-C-D şeklinde satırlardır", b: "Sadece açıklama yapmak için kullanılan metin kutusudur", c: "Satır ve sütunların kesiştiği alanlardır", d: "1-2-3-4 şeklinde sütunlardır" }, answer: "c" },
+      { id: 49, category: "Excel", question: "Hücreye girilebilen bilgiler için aşağıdakilerden hangisi yanlıştır?", options: { a: "Menü", b: "Formül/Fonksiyon", c: "Metin", d: "Sayı" }, answer: "a" },
+
+      // Excel Bölüm 2
+      { id: 50, category: "Excel", question: "Excel’de formüller hangi işaretle başlar?", options: { a: "=", b: "+", c: "(", d: "$" }, answer: "a" },
+      { id: 51, category: "Excel", question: "Aşağıdakilerden hangisi Mutlak Referans (Absolute Reference) gösterimindedir?", options: { a: "A1", b: "$A$1", c: "!A!!", d: "#a#1" }, answer: "b" },
+      { id: 52, category: "Excel", question: "Aşağıdaki formüllerden hangisi yanlış yazılmıştır?", options: { a: "=10+50", b: "=B7*B1", c: "=B7+14", d: "=B1+7B" }, answer: "d" },
+      { id: 53, category: "Excel", question: "Excel’de bir formülü kopyaladığınızda aşağıdakilerden hangisi gerçekleşir?", options: { a: "Formülün orijinal kopyasını siler", b: "Yeni kopyalanan formülde hücre referanslarını düzenler", c: "Mutlak hücre referanslarını düzenler", d: "Bağıl hücre referanslarını düzenlemez" }, answer: "b" },
+      { id: 54, category: "Excel", question: "(C2:C9) aşağıdakilerden hangisini ifade eder?", options: { a: "C2 ve C9 dışındaki hücreler", b: "C2 ile C9 aralığındaki hücreler", c: "C2 ve C9 hücreleri", d: "C2 ile C9 aralığındaki hücrelerin dışındaki hücreler" }, answer: "b" },
+      { id: 55, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de doğru bir hücre aralığıdır?", options: { a: "AB:CD", b: "A1:A5", c: "1A:1B", d: "A1:1C" }, answer: "b" },
+      { id: 56, category: "Excel", question: "Aşağıdakilerden hangisi Koşullu Biçimlendirme (Conditional Formatting) stil menüsünde Veri Çubuğu (Data Bars) işlevini tanımlar?", options: { a: "Seçilen hücre aralığındaki değerlerin grafiğini oluşturur", b: "Hücrelerdeki değerler arasındaki ilişkiyi gösterir", c: "Tablo stillerini bir grup hücreye uygular", d: "Seçili hücreleri alfabetik sıraya göre sıralar" }, answer: "b" },
+      { id: 57, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de «Bul ve Değiştir» (Find and Replace) özelliği için doğru değildir?", options: { a: "Kalın yazılar için arama yapabilir ve italik olarak değiştirebilirsiniz", b: "Kelimenin tamamını arayıp aramayacağınıza karar verebilirsiniz", c: "Formüller içinde arama yapabilirsiniz", d: "Satırlara, sütunlara veya sayfalara göre arama yapabilirsiniz (HEPSİ DOĞRUDUR)" }, answer: "d" },
+      { id: 58, category: "Excel", question: "Excel’de verileri azalan ya da artan şekilde sıralamak için hangi menü kullanılır?", options: { a: "Stiller > Hücre Stilleri > Başlıklar", b: "Ekle > Grafikler > Çubuk", c: "Giriş > Hizalama > Hücreleri Birleştir", d: "Giriş > Düzenleme > Sırala (Home > Editing > Sort)" }, answer: "d" },
+      { id: 59, category: "Excel", question: "Hücre içeriklerine göre sütun genişliğini ayarlamaya yarayan Otomatik Sığdırma (AutoFit) özelliği nasıl kullanılır?", options: { a: "Sütun başlığındaki sütun adını çift tıklayarak", b: "Çalışma sayfasındaki hücre işaretçisini çift tıklayarak", c: "Sütun başlığında sütunun sağ kenarına çift tıklayarak", d: "Sütun başlığında sütunun sol kenarına çift tıklayarak" }, answer: "c" },
+
+      // Excel Bölüm 3
+      { id: 60, category: "Excel", question: "Bir hücrenin içinde #### işareti varsa bunun anlamı nedir?", options: { a: "Formül hatası vardır", b: "Hücre yanlış biçimlendirilmiştir", c: "Bilgiler hücreye sığmamıştır", d: "İşlev hatası vardır" }, answer: "c" },
+      { id: 61, category: "Excel", question: "Excel’de Çarpma formülü yazarken kullanılan işaret aşağıdakilerden hangisidir?", options: { a: "#", b: "x", c: "*", d: "<" }, answer: "c" },
+      { id: 62, category: "Excel", question: "Aşağıdakilerden hangisi ile otomatik toplam alınır?", options: { a: "%", b: "fx", c: "Σ", d: "&" }, answer: "c" },
+      { id: 63, category: "Excel", question: "Excel’de şarta bağlı işlem yapan fonksiyon aşağıdakilerden hangisidir?", options: { a: "=ORTALAMA (AVERAGE)", b: "=DÜŞEYARA (VLOOKUP)", c: "=EĞER (IF)", d: "=DOĞRU (TRUE)" }, answer: "c" },
+      { id: 64, category: "Excel", question: "=B4+B5+B6+B7 formülünün eşdeğeri aşağıdakilerden hangisidir?", options: { a: "=TOPLA(B4;B7) ya da =SUM(B4;B7)", b: "=TOPLA(B4,B7) ya da =SUM(B4,B7)", c: "=TOPLA(B4:B7) ya da =SUM(B4:B7)", d: "=TOPLA(B4B7) ya da =SUM(B4B7)" }, answer: "c" },
+      { id: 65, category: "Excel", question: "Seçili olan hücrenin sağ alt köşesinde siyah renkli + işareti belirdiğinde tıklanıp sürüklenirse aşağıdakilerden hangisi gerçekleşir?", options: { a: "Metin ya da Formül Taşıma", b: "Metin ya da Formül Kopyalama", c: "Metin ya da Formül Çerçevelendirme", d: "Metin ya da Formül Bloklama" }, answer: "b" },
+      { id: 66, category: "Excel", question: "Sayıların görüntülenmesinde 1000 ayıracı kullanmak için hangi yöntem izlenir?", options: { a: "Giriş > Sayı > Finansal Sayı Biçimi", b: "Giriş > Sayı > Virgül Stili (Home > Number > Comma Style)", c: "Giriş > Sayı > Yüzde Stili", d: "Giriş > Sayı > Ondalık Arttır" }, answer: "b" },
+      { id: 67, category: "Excel", question: "Para (madeni para ve banknot) simgeli düğmenin Excel’de görevi nedir?", options: { a: "Küçük resimlerden para resmini eklemeye yarar", b: "Seçilen hücreler içindeki verilerin istatistiksel hesaplamalarını yapar", c: "Seçilen hücrelerdeki değerleri para birimi ile gösterir", d: "Hücre içine yazılan TL para birimini çapraz kur hesabı ile hesaplar" }, answer: "c" },
+      { id: 68, category: "Excel", question: "Excel’de «Metni Kaydır» (Wrap Text) özelliğinin görevi aşağıdaki hangi seçenekte doğru olarak verilmiştir?", options: { a: "Hücre içindeki metni sola doğru kaydırarak girintiyi artırmaya yarar", b: "Hücre içindeki metni sağa doğru kaydırarak girintiyi azaltmaya yarar", c: "Hücre içindeki yazıyı eklenen grafiğin sağına kaydırarak sağda görünmesini sağlar", d: "Hücre içine sığmayan verinin aynı hücre içinde birden fazla satırda yazılmasını sağlar" }, answer: "d" },
+      { id: 69, category: "Excel", question: "=TOPLA (A1:A3;A7) ya da =SUM(A1:A3;A7) formülünün eşdeğer formülü aşağıdaki seçeneklerden hangisidir?", options: { a: "=A1+A2+A3+A7", b: "=A1+ A2+A3+A4+A5+A6+A7", c: "=A1+A3+A7", d: "=A1+A7" }, answer: "a" },
+
+      // Excel Bölüm 4
+      { id: 70, category: "Excel", question: "Excel’de bir çalışma sayfasındaki hücreler ................. ile tanımlanır.", options: { a: "Hücre adı", b: "Sütun harfleri ve satır numaraları", c: "Sütun numaraları ve satır harfleri", d: "Hücre yerleşim koordinatları" }, answer: "b" },
+      { id: 71, category: "Excel", question: "Seçilen hücreleri daha büyük tek bir hücre haline getirmek için aşağıdakilerden hangisi kullanılır?", options: { a: "Metni Kaydır (Wrap Text)", b: "Tekrarları Kaldır (Remove Duplicates)", c: "Bölmeleri Dondur (Freeze Panes)", d: "Hücreleri Birleştir (Merge Cells)" }, answer: "d" },
+      { id: 72, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de geçerli bir formül değildir?", options: { a: "=TOPLA(D5:E6)-A3 ya da =SUM(D5:E6)-A3", b: "=TOPLA(A1:A5)*,5 ya da =SUM(A1:A5)*,5", c: "=TOPLA(B2C8)/(10-A1) ya da =SUM(B2C8)/(10-A1)", d: "=TOPLA(C1;D7)-8 ya da =SUM(C1;D7)-8" }, answer: "c" },
+      { id: 73, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de geçerli bir Grafik (Chart) tipi değildir?", options: { a: "Alan (Area)", b: "Pasta (Pie)", c: "Sütun (Column)", d: "Döngü (Cycle)" }, answer: "d" },
+      { id: 74, category: "Excel", question: "Aşağıdakilerden hangisi Excel’de geçerli bir formüldür?", options: { a: "=((A2+B5)*5%", b: "=ORTALAMA(D5:H5))/ ,8 ya da =AVERAGE(D5:H5))/ ,8", c: "=EĞER(A17<125;\"A\";\"B\") ya da =IF(A17<125;\"A\";\"B\")", d: "=MİN (D14D68)+E17 ya da =MIN (D14D68)+E17" }, answer: "c" },
+      { id: 75, category: "Excel", question: "Sütun A'dan sütun E'ye kadar, beş sütunda yer alan verilere sahipseniz, tüm verinin üzerine ortalanmış bir başlık oluşturmanın bir yolu, aşağıdakilerden hangisi olabilir?", options: { a: "Başlık metnini A1 hücresine yazıp, A1:A5 hücre aralığına Hücreleri Birleştir özelliği uygulamak", b: "Başlık metnini A1 hücresine yazıp, A1:E1 hücre aralığına Hücreleri Birleştir özelliği uygulamak", c: "Başlık metnini C1 hücresine yazmak", d: "Biçim menüsünden Ortala özelliği uygulamak" }, answer: "b" },
+      { id: 76, category: "Excel", question: "=EĞER(A1=\"YES\";\"DONE\";\"RESTART\") ya da =IF(A1=\"YES\";\"DONE\";\"RESTART\") formülünde A1 hücresinde \"NO\" yazıyorsa, formülün sonucu ne olur?", options: { a: "Formül \"DONE\" değerini verir", b: "Formül hata verir", c: "Formül \"RESTART\" değerini verir", d: "Formül \"YES\" değerini verir" }, answer: "c" },
+      { id: 77, category: "Excel", question: "Excel’de seçili hücrenin ismi nerede görülür?", options: { a: "Ad Kutusu (Name Box)", b: "Formül Çubuğu (Formula Bar)", c: "Sütun (Column)", d: "Hücre Stilleri (Cell Styles)" }, answer: "a" },
+      { id: 78, category: "Excel", question: "Excel’de formül oluştururken $D$6 şeklinde $ işareti kullanılması ne anlama gelir?", options: { a: "Hücre biçimini, dolar para birimine değiştirir.", b: "Hücrenin içine sadece rakam yazılmasını sağlar", c: "Hata verir", d: "Mutlak başvuru (absolute reference) oluşturur" }, answer: "d" },
+      { id: 79, category: "Excel", question: "Aşağıdaki formüllerden hangisi bir Excel sayfasında J sütununun 1. ve 8. satırları arasındaki hücrelerin toplamını verir?", options: { a: "=EKLE(J1-J8) ya da =ADD(J1-J8)", b: "=TOPLA(J1:J8) ya da =SUM(J1:J8)", c: "=J:1+J:8", d: "=TOPLA J:1-8 ya da =SUM J:1-8" }, answer: "b" }
+    ];
+
+    let currentCategory = 'all';
+    let filteredQuestions = [...questions];
+    let currentIndex = 0;
+    const userAnswers = {};
+
+    const categoryBadge = document.getElementById('categoryBadge');
+    const questionNumber = document.getElementById('questionNumber');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressBar = document.getElementById('progressBar');
+    const currentQDisplay = document.getElementById('currentQDisplay');
+    const correctScore = document.getElementById('correctScore');
+    const wrongScore = document.getElementById('wrongScore');
+    const gridNumbers = document.getElementById('gridNumbers');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function applyFilter(cat) {
+      currentCategory = cat;
+      if (cat === 'all') {
+        filteredQuestions = [...questions];
+      } else {
+        filteredQuestions = questions.filter(q => q.category === cat);
+      }
+      currentIndex = 0;
+      renderGrid();
+      loadQuestion();
+    }
+
+    function renderGrid() {
+      gridNumbers.innerHTML = '';
+      filteredQuestions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.classList.add('q-jump-btn');
+        btn.textContent = idx + 1;
+
+        if (userAnswers[q.id]) {
+          if (userAnswers[q.id] === q.answer) {
+            btn.classList.add('is-correct');
+          } else {
+            btn.classList.add('is-wrong');
+          }
+        }
+
+        if (idx === currentIndex) {
+          btn.classList.add('active');
+        }
+
+        btn.addEventListener('click', () => {
+          currentIndex = idx;
+          loadQuestion();
+        });
+        gridNumbers.appendChild(btn);
+      });
+    }
+
+    function updateStats() {
+      let correct = 0;
+      let wrong = 0;
+      filteredQuestions.forEach(q => {
+        if (userAnswers[q.id]) {
+          if (userAnswers[q.id] === q.answer) correct++;
+          else wrong++;
+        }
+      });
+      correctScore.textContent = correct;
+      wrongScore.textContent = wrong;
+      currentQDisplay.textContent = `${currentIndex + 1}/${filteredQuestions.length}`;
+      progressBar.style.width = `${((currentIndex + 1) / filteredQuestions.length) * 100}%`;
+    }
+
+    function loadQuestion() {
+      const q = filteredQuestions[currentIndex];
+      if (!q) return;
+
+      categoryBadge.textContent = q.category.toUpperCase();
+      categoryBadge.className = `badge badge-${q.category.toLowerCase()}`;
+      questionNumber.textContent = `Soru ${currentIndex + 1} / ${filteredQuestions.length}`;
+      questionText.textContent = q.question;
+
+      optionsGrid.innerHTML = '';
+      const selected = userAnswers[q.id];
+
+      for (const [key, value] of Object.entries(q.options)) {
+        const btn = document.createElement('button');
+        btn.classList.add('option-btn');
+        btn.innerHTML = `<span class="option-letter">${key.toUpperCase()}</span><span>${value}</span>`;
+
+        if (selected) {
+          btn.disabled = true;
+          if (key === q.answer) {
+            btn.classList.add('correct');
+          } else if (key === selected) {
+            btn.classList.add('wrong');
+          }
+        } else {
+          btn.addEventListener('click', () => handleAnswer(key));
+        }
+
+        optionsGrid.appendChild(btn);
+      }
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === filteredQuestions.length - 1;
+
+      updateStats();
+      renderGrid();
+    }
+
+    function handleAnswer(choice) {
+      const q = filteredQuestions[currentIndex];
+      userAnswers[q.id] = choice;
+      loadQuestion();
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < filteredQuestions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+      }
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.cat);
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (confirm("Tüm cevaplarınızı sıfırlamak istiyor musunuz?")) {
+        for (const key in userAnswers) delete userAnswers[key];
+        currentIndex = 0;
+        loadQuestion();
+      }
+    });
+
+    // İlk başlatma
+    applyFilter('all');
+  </script>
+</body>
+</html>

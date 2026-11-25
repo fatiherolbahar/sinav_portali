@@ -19,6 +19,7 @@
   /* ---------- Başlatma ---------- */
   function init() {
     var id = new URLSearchParams(location.search).get('course');
+    if (id === 'ofis') id = 'bilgisayar-becerileri';
     course = (window.COURSES_MANIFEST || []).filter(function (c) { return c.id === id; })[0];
     if (!course) return fail('Ders bulunamadı. Lütfen ana sayfadan bir ders seçin.');
     document.title = course.name + ' – Sınav';
@@ -162,7 +163,7 @@
       (mode === 'review' ? '' : '<button class="btn" id="clearBtn"' + (ans === undefined ? ' disabled' : '') + '>↺ Boş Bırak / Seçimi Kaldır</button>') + '</div>';
 
     card.querySelectorAll('.opt').forEach(function (b) { b.onclick = function () { choose(b.dataset.l); }; });
-    $('#palBtn').onclick = function () { document.body.classList.add('palette-open'); };
+    $('#palBtn').onclick = openPalette;
     $('#prevBtn').onclick = function () { go(v[pos - 1]); };
     $('#nextBtn').onclick = function () { go(v[pos + 1]); };
     var db = $('#doneBtn'); if (db) db.onclick = askFinish;
@@ -179,7 +180,7 @@
       return '<button class="' + cls + '" data-i="' + i + '">' + Q[i].n + '</button>';
     }).join('');
     $('#pgrid').querySelectorAll('.pb').forEach(function (b) {
-      b.onclick = function () { go(+b.dataset.i); document.body.classList.remove('palette-open'); };
+      b.onclick = function () { go(+b.dataset.i); closePalette(); };
     });
     $('#legend').innerHTML = mode === 'review'
       ? '<span><i style="background:var(--ok-l);border-color:var(--ok)"></i>Doğru</span><span><i style="background:var(--bad-l);border-color:var(--bad)"></i>Yanlış</span><span><i></i>Boş</span><span><i style="background:var(--primary);border-color:var(--primary)"></i>Aktif</span>'
@@ -205,7 +206,7 @@
     $('#examView').classList.add('hidden');
     $('#paletteFab').classList.add('hidden');
     $('#finishBtn').classList.add('hidden');
-    document.body.classList.remove('palette-open');
+    closePalette();
     $('#attemptBadge').textContent = r.n + '. Deneme – Tamamlandı';
     var rv = $('#resultView'); rv.classList.remove('hidden');
     rv.innerHTML = '<div class="card result"><h2>🏁 ' + r.n + '. Deneme Sonucu</h2><p style="color:var(--muted)">' + fmt(r.date) + '</p>' +
@@ -251,6 +252,124 @@
       [{ label: 'Vazgeç' }, { label: '✓ Evet, Bitir', cls: 'btn-primary', fn: finish }]);
   }
 
+  function openPalette() {
+    var pal = $('#palette');
+    if (pal) {
+      pal.style.transform = '';
+      pal.style.transition = '';
+    }
+    var ov = $('#overlay');
+    if (ov) {
+      ov.style.backgroundColor = '';
+      ov.style.transition = '';
+    }
+    document.body.classList.add('palette-open');
+  }
+
+  function closePalette() {
+    var pal = $('#palette');
+    if (pal) {
+      pal.style.transform = '';
+      pal.style.transition = '';
+    }
+    var ov = $('#overlay');
+    if (ov) {
+      ov.style.backgroundColor = '';
+      ov.style.transition = '';
+    }
+    document.body.classList.remove('palette-open');
+  }
+
+  /* Mobil aşağı çekerek kapatma (swipe down to dismiss) */
+  function setupPaletteDrag() {
+    var pal = $('#palette');
+    var pgrid = $('#pgrid');
+    var overlay = $('#overlay');
+    if (!pal) return;
+
+    var startY = 0;
+    var currentY = 0;
+    var isDragging = false;
+    var canDrag = false;
+    var startTime = 0;
+
+    pal.addEventListener('touchstart', function (e) {
+      if (!document.body.classList.contains('palette-open')) return;
+      var touch = e.touches[0];
+      startY = touch.clientY;
+      currentY = startY;
+      startTime = Date.now();
+
+      var target = e.target;
+      var inHeader = target.closest('h3') || target.classList.contains('grab') || target.closest('.legend');
+      var atScrollTop = pgrid ? pgrid.scrollTop <= 0 : true;
+
+      if (inHeader || atScrollTop) {
+        canDrag = true;
+        isDragging = false;
+      } else {
+        canDrag = false;
+      }
+    }, { passive: true });
+
+    pal.addEventListener('touchmove', function (e) {
+      if (!canDrag || !document.body.classList.contains('palette-open')) return;
+      var touch = e.touches[0];
+      currentY = touch.clientY;
+      var diffY = currentY - startY;
+
+      if (diffY > 0) {
+        if (pgrid && pgrid.scrollTop > 0) {
+          canDrag = false;
+          return;
+        }
+        isDragging = true;
+        if (e.cancelable) e.preventDefault();
+
+        pal.style.transition = 'none';
+        pal.style.transform = 'translateY(' + diffY + 'px)';
+        if (overlay) {
+          var op = Math.max(0, 0.45 * (1 - diffY / 320));
+          overlay.style.backgroundColor = 'rgba(20, 16, 50, ' + op + ')';
+        }
+      } else if (isDragging) {
+        pal.style.transform = '';
+      }
+    }, { passive: false });
+
+    function endDrag() {
+      if (!canDrag && !isDragging) return;
+      canDrag = false;
+      if (!isDragging) return;
+      isDragging = false;
+
+      var diffY = currentY - startY;
+      var duration = Date.now() - startTime;
+      var velocity = diffY / Math.max(1, duration);
+
+      pal.style.transition = 'transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)';
+      if (overlay) overlay.style.transition = 'background-color 0.22s ease';
+
+      if (diffY > 70 || (velocity > 0.4 && diffY > 20)) {
+        pal.style.transform = 'translateY(110%)';
+        if (overlay) overlay.style.backgroundColor = 'rgba(20, 16, 50, 0)';
+        setTimeout(function () {
+          closePalette();
+        }, 220);
+      } else {
+        pal.style.transform = '';
+        if (overlay) overlay.style.backgroundColor = '';
+        setTimeout(function () {
+          pal.style.transition = '';
+          if (overlay) overlay.style.transition = '';
+        }, 220);
+      }
+    }
+
+    pal.addEventListener('touchend', endDrag, { passive: true });
+    pal.addEventListener('touchcancel', endDrag, { passive: true });
+  }
+
   function bind() {
     $('#feedbackToggle').onchange = function (e) { S.feedback = e.target.checked; Store.setPref('feedback', S.feedback); save(); renderAll(); };
     $('#finishBtn').onclick = askFinish;
@@ -263,8 +382,9 @@
         }).join('') + '</tbody></table></div>' : '<p class="empty">Bu derste henüz tamamlanmış deneme yok.</p>';
       modal('📊 Deneme Geçmişi – ' + esc(course.name), html, [{ label: 'Kapat', cls: 'btn-primary' }]);
     };
-    $('#paletteFab').onclick = function () { document.body.classList.add('palette-open'); };
-    $('#paletteClose').onclick = $('#overlay').onclick = function () { document.body.classList.remove('palette-open'); };
+    $('#paletteFab').onclick = openPalette;
+    $('#paletteClose').onclick = $('#overlay').onclick = closePalette;
+    setupPaletteDrag();
     document.addEventListener('keydown', function (e) {
       if (e.target.tagName === 'INPUT' || document.querySelector('.backdrop') || $('#examView').classList.contains('hidden')) return;
       var v = visible(), pos = v.indexOf(S.current), k = e.key.toUpperCase();

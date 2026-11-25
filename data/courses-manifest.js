@@ -5,11 +5,11 @@
  */
 window.COURSES_MANIFEST = [
   {
-    id: 'ofis',
-    name: 'Temel Bilgi Teknolojileri (Ofis)',
-    questionCount: 49,
+    id: 'bilgisayar-becerileri',
+    name: 'Bilgisayar Becerileri (Word & Excel)',
+    questionCount: 79,
     categories: ['Tümü', 'Word', 'Excel'],
-    file: 'data/ofis.js'
+    file: 'data/bilgisayar-becerileri.js'
   },
   {
     id: 'sistem-analizi',
